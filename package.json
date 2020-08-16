@@ -1,0 +1,43 @@
+{
+  "name": "eth-hive",
+  "version": "1.0.0",
+  "description": "ETH wrapped HIVE tokens",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fbslo/eth-hive.git"
+  },
+  "keywords": [
+    "hive",
+    "eth",
+    "wrapped",
+    "defi"
+  ],
+  "author": "fbslo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fbslo/eth-hive/issues"
+  },
+  "homepage": "https://github.com/fbslo/eth-hive#readme",
+  "dependencies": {
+    "@hiveio/dhive": "^0.14.1",
+    "axios": "^0.19.2",
+    "bip39": "^3.0.2",
+    "body-parser": "^1.19.0",
+    "ethereumjs-tx": "^2.1.2",
+    "ethereumjs-util": "^7.0.4",
+    "express": "^4.17.1",
+    "hdkey": "^2.0.1",
+    "log4js": "^6.3.0",
+    "mongodb": "^3.6.0",
+    "node-toobusy": "^0.6.3",
+    "uuid-random": "^1.3.2",
+    "web3": "^1.2.11"
+  },
+  "devDependencies": {
+    "jest": "^26.4.0"
+  }
+}

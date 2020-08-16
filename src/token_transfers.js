@@ -4,9 +4,10 @@ const mongo = require("../database/mongo.js")
 const database = mongo.get().db("ETH-HIVE")
 
 const config = require("../config/config.js")
-var client = new dhive.Client('https://api.hive.blog')
+var client = new dhive.Client(config.hive_api_nodes)
 
 var logger = require('./logs/logger.js');
+const multisig = require("./master_node/multisig.js")
 
 async function processTokenTransfer(data){
   database.collection("addresses").findOne({ $text: { $search: data.to, $caseSensitive: false } }, (err, result) => {
@@ -34,7 +35,7 @@ function processHiveTransfer(tx_data, db_data){
   delete data.tokenInfo;
   insertTx(data)
     .then((result) => {
-      sendHive(result.hiveUsername, result.value, result.transactionHash)
+      sendHive(result.hiveUsername, result.value, result.transactionHash, result.to)
     })
     .catch((err) => {
       logger.debug.error(err);
@@ -50,19 +51,35 @@ function insertTx(data){
   })
 }
 
-function sendHive(to, value, hash){
+async function sendHive(to, value, hash, deposit_address){
+  const expireTime=1000*3590;
+  const props = await client.database.getDynamicGlobalProperties();
+  const ref_block_num = props.head_block_number & 0xFFFF;
+  const ref_block_prefix = Buffer.from(props.head_block_id, 'hex').readUInt32LE(4);
+  const expiration = new Date(Date.now() + expireTime).toISOString().slice(0, -5);
+  const extensions = [];
+  const operations= [['transfer',
+                   {
+                    'amount': parseFloat(value).toFixed(3)+' HIVE',
+                    'from': config.hiveAccount,
+                    'memo': `${parseFloat(value).toFixed(3)} HIVE converted! Transaction hash: ${hash}`,
+                    'to': to
+                  }]];
   const tx = {
-    from: config.hiveAccount,
-    to: to,
-    amount: parseFloat(value).toFixed(3) + ' HIVE',
-    memo: `${parseFloat(value).toFixed(3)} WHIVE converted! Tx hash: ${hash}`
-  }
-  const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
-  const op = ["transfer", tx];
-  client.broadcast
-    .sendOperations([op], key)
-    .then(res => console.log(res))
-    .catch(err => logger.debug.error(err));
+              expiration,
+              extensions,
+              operations,
+              ref_block_num,
+              ref_block_prefix,
+          }
+  addNewMultiSigToDatabase(tx, hash, deposit_address)
+  multisig.process(tx, hash, deposit_address)
+}
+
+function addNewMultiSigToDatabase(tx, hash, deposit){
+  database.collection("multisig").insertOne({transaction: tx, ethereumHash: hash, timestamp: new Date().getTime(), date: new Date(), deposit_address: deposit}, (err, result) => {
+    if (err) logger.debug.error(err)
+  })
 }
 
 module.exports.processTokenTransfer = processTokenTransfer

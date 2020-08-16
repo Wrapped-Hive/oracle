@@ -9,6 +9,7 @@ const TOKEN_API_URL = config.token_api_url;
 
 async function start(callback) {
   setInterval(() => {
+    console.log("Tracking")
     axios
       .get(
         `${TOKEN_API_URL}/${config.contractAddress}?apiKey=${API_KEY}` +

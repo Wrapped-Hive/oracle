@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var toobusy = require('node-toobusy');
 var serveStatic = require('serve-static')
 var path = require('path')
+const rateLimit = require("express-rate-limit");
 
 const db = require('../database/mongo.js');
 const track = require("./track.js");
@@ -15,6 +16,11 @@ db.connect()
       console.error(e);
       process.exit(1);
   });
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
 
 app.use(function(req, res, next) {
   if (toobusy()) res.status(503).send("I'm busy right now, sorry.");
@@ -29,6 +35,7 @@ app.use(function(req, res, next) {
 app.use(serveStatic(path.join(__dirname, 'frontend')))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(limiter);
 
 function main() {
   const deposit = require("./deposit.js");

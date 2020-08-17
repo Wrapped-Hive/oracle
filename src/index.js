@@ -41,5 +41,6 @@ function main() {
   app.use('/create', require('./create_new_withdraw.js'));
   app.use('/get_addresses', require('./api/get_addresses.js'));
   app.use('/ping', require('./api/ping.js'));
+  app.use('/status', require('./api/status.js'));
   app.listen(8080)
 }

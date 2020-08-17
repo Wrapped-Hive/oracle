@@ -67,6 +67,14 @@ Run: `SEED='here goes your memonic phrase' node src/utils/deposit_private_keys.j
 
 ---
 
+`GET` `/status`
+
+On success:
+
+`{deposit: config.hiveAccount, minAmount: config.min_amount, maxAmount: maxAmount}`
+
+---
+
 Database: MongoDB, name: `ETH-HIVE`
 
 Collection: `addresses`

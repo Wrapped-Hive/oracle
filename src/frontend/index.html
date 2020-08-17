@@ -21,6 +21,10 @@
     * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
     -->
 <link href="./main.css" rel="stylesheet"></head>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="./index.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js" charset="utf-8"></script>
 <body>
     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
         <div class="app-header bg-danger header-text-light header-shadow">
@@ -137,22 +141,22 @@
                 </div>
 
 				<div class="app-main__outer">
-                    <div class="app-main__inner">
-                        <div class="app-page-title">
-                            <div class="page-title-wrapper">
-                                <div class="page-title-heading">
-                                    <div class="page-title-icon">
-                                        <i class="fa fa-cogs"></i>
-                                    </div>
-                                    <div>
-										Wrapped Hive
-                                        <div class="page-title-subheading">
-											Gateway between HIVE and ETH.
-                                        </div>
-                                    </div>
-                                </div>
-                                </div>
-                        </div>
+          <div class="app-main__inner">
+            <div class="app-page-title">
+              <div class="page-title-wrapper">
+                  <div class="page-title-heading">
+                    <div class="page-title-icon">
+                        <i class="fa fa-cogs"></i>
+                    </div>
+                    <div>
+	                     Wrapped Hive
+                      <div class="page-title-subheading">
+		                   Gateway between HIVE and ETH.
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+              </div>
 						<div class="row">
 							<div class="col-md-2">
 							</div>
@@ -160,14 +164,15 @@
 								<div class="main-card mb-3 card">
 									<div class="card-body"><h4 class="card-title">HIVE to WHIVE</h4>
 										<p>Send your HIVE to the Ethereum blockchain and create WHIVE</p>
-										<p><input name="test" id="exampleEmail" placeholder="Paste your ethereum address" type="email" class="form-control"></p>
-										<p><button class="mt-1 btn btn-primary">Submit</button></p>
+										<p><input name="eth" id="eth" placeholder="Enter your ethereum address" type="text" class="form-control"></p>
+                    <div id='invalid_eth_address'></div>
+										<p><button class="mt-1 btn btn-primary" onCLick='isEthereumAddressCorrect()'>Submit</button></p>
 									</div>
 								</div>
 							</div>
 							<div class="col-md-2">
 							</div>
-                        </div>
+          </div>
 
 						<div class="row">
 							<div class="col-md-2">
@@ -176,17 +181,18 @@
 								<div class="main-card mb-3 card">
 									<div class="card-body"><h4 class="card-title">WHIVE to HIVE</h4>
 										<p>Send your WHIVE to receive HIVE tokens</p>
-										<p><input name="test" id="exampleEmail" placeholder="Paste your Hive user name" type="email" class="form-control"></p>
-										<p><button class="mt-1 btn btn-primary">Submit</button></p>
+										<p><input name="hive" id="hive" placeholder="Paste your Hive user name" type="hive" class="form-control"></p>
+                    <p><button class="mt-1 btn btn-primary" onClick='displayDetails()'>Submit</button></p>
 									</div>
 								</div>
 							</div>
 							<div class="col-md-2">
 							</div>
-                        </div>
-                    </div>
+              </div>
+              <span id='deposit_data'></span>
+          </div>
 				</div>
         </div>
     </div>
-<script type="text/javascript" src="./assets/scripts/main.js"></script></body>
+    <script type="text/javascript" src="./assets/scripts/main.js"></script></body>
 </html>

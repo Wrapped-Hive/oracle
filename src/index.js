@@ -2,6 +2,8 @@ var express =  require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var toobusy = require('node-toobusy');
+var serveStatic = require('serve-static')
+var path = require('path')
 
 const db = require('../database/mongo.js');
 const track = require("./track.js");
@@ -24,7 +26,7 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   next();
 });
-app.use('/static', express.static('frontend'))
+app.use(serveStatic(path.join(__dirname, 'frontend')))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -39,9 +41,5 @@ function main() {
   app.use('/create', require('./create_new_withdraw.js'));
   app.use('/get_addresses', require('./api/get_addresses.js'));
   app.use('/ping', require('./api/ping.js'));
-  app.get("/", (req, res) => {
-    console.log("new  conection", new Date().getTime())
-    res.sendFile(__dirname + '/frontend/index.html')
-  })
   app.listen(8080)
 }

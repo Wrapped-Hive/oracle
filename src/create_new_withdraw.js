@@ -56,7 +56,7 @@ async function isHiveUsernameValid(username){
 function findAddressWithUsername(username){
   let current_time = new Date().getTime()
   return new Promise((resolve, reject) => {
-    database.findOne({"transactions.hiveUsername": username, "transactions.expiration": {$gt: current_time + 172800000}}, (err, result) => {
+    database.findOne({"transactions.hiveUsername": username, "transactions.expiration": {$gt: current_time + 172800000}}, (err, result) => { //more tha 2 days from expiration
       if (err) reject(err)
       else {
         if (result == null) resolve(false)

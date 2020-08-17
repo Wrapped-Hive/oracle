@@ -4,7 +4,7 @@ const mongo = require("../database/mongo.js")
 const database = mongo.get().db("ETH-HIVE")
 
 const config = require("../config/config.js")
-var client = new dhive.Client('https://api.hive.blog')
+var client = new dhive.Client(config.hive_api_nodes)
 
 var logger = require('./logs/logger.js');
 

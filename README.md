@@ -6,8 +6,12 @@ HIVE tokens wrapped in ERC-20 tokens
 
 ***Abstract***
 
-WHIVE oracle serves as an exchange between HIVE and WHIVE, ERC20 tokens on Ethereum network. When new deposits with Ethereum address as memo are received, app will mint new WHIVE tokens and sent them to user.
-To process the withdraw from WHIVE to HIVE, app generates deposit address for each user with 7 days expiration. This allows for address reuse and reduce number of addresses to monitor (and later burn deposited WHIVE) to save on ETH fees. To process the WHIVE transfers, app use https://ethplorer.com API.
+WHIVE oracle serves as an exchange between HIVE and WHIVE, ERC20 tokens on Ethereum network.
+
+When new deposits with Ethereum address as memo are received, app will mint new WHIVE tokens and sent them to user.
+To process the withdraw from WHIVE to HIVE, app generates deposit address for each user with 7 days expiration.
+
+This allows for address reuse and reduce number of addresses to monitor (and later burn deposited WHIVE) to save on ETH fees. To process the WHIVE transfers, app use https://ethplorer.io API.
 
 ---
 

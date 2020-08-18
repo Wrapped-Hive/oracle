@@ -10,6 +10,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="Oracle WHIVE">
     <meta name="msapplication-tap-highlight" content="no">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="./assets/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./assets/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./assets/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./assets/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./assets/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./assets/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./assets/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./assets/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="./assets/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="./assets/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png">
+    <link rel="manifest" href="./assets/icons/manifest.json">
+    <meta name="msapplication-TileColor" content="#./assets/iconsffffff">
+    <meta name="msapplication-TileImage" content="./assets/icons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
     <!--
     =========================================================
     * ArchitectUI HTML Theme Dashboard - v1.0.0
@@ -23,8 +41,9 @@
 <link href="./main.css" rel="stylesheet"></head>
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-<script src="./index.js" charset="utf-8"></script>
+<script src="./verify.js" charset="utf-8"></script>
 <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/@hiveio/hive-js/dist/hive.min.js"></script>
 <body>
     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
         <div class="app-header bg-danger header-text-light header-shadow">
@@ -153,7 +172,7 @@
                                   <div class="widget-subheading">Native Asset</div>
                               </div>
                               <div class="widget-content-right">
-                                  <div class="widget-numbers text-success">12,122<small>.912</small></div>
+                                  <div class="widget-numbers text-success" id='hive_balance'>Loading...</small></div>
                               </div>
                           </div>
                       </div>
@@ -168,7 +187,7 @@
                                   <div class="widget-subheading">Wrapped Hive</div>
                               </div>
                               <div class="widget-content-right">
-                                  <div class="widget-numbers text-warning">12,122<small>.912</small></div>
+                                  <div class="widget-numbers text-warning" id='whive_balance'>Loading...</small></div>
                               </div>
                           </div>
                       </div>
@@ -191,21 +210,51 @@
               </div>
 
 
-              <div class="col-md-12">
-                <div class="main-card mb-12 card">
-                    <div class="card-body">
-                        <h5 class="card-title">Conversion</h5>
-                        <div style="height: 400px"><div style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;" class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
-                            <canvas id="line-chart" style="display: block; width: 727px; height: 400px;" height="400" class="chartjs-render-monitor" width="727"></canvas>
-                        </div>
-                    </div>
-                </div>
-              </div>
-
-
-
-
-
+              <div class="card-body">
+                 <ul class="tabs-animated-shadow nav-justified tabs-animated nav">
+                     <li class="nav-item">
+                         <a role="tab" class="nav-link active" id="tab-c1-0" data-toggle="tab" href="#tab-animated1-0">
+                             <span class="nav-text">Hive Accounts</span>
+                         </a>
+                     </li>
+                     <li class="nav-item">
+                         <a role="tab" class="nav-link" id="tab-c1-1" data-toggle="tab" href="#tab-animated1-1">
+                             <span class="nav-text">Ethereum addresses</span>
+                         </a>
+                     </li>
+                 </ul>
+                 <center><div class="tab-content">
+                     <div class="tab-pane active" id="tab-animated1-0" role="tabpanel">
+                         <p class="mb-0">
+                           <div class="col-md-6">
+                             <div class="main-card mb-3 card">
+                                 <div class="card-body"><h5 class="card-title"></h5>
+                                     <ul class="list-group">
+                                         <li class="list-group-item" id='hive_account'>Loading</li>
+                                     </ul>
+                                 </div>
+                             </div>
+                         </div>
+                         </p>
+                     </div>
+                     <div class="tab-pane" id="tab-animated1-1" role="tabpanel">
+                         <p class="mb-0">
+                           <div class="tab-pane active" id="tab-animated1-0" role="tabpanel">
+                               <p class="mb-0">
+                                 <div class="col-md-6">
+                                   <div class="main-card mb-3 card">
+                                       <div class="card-body"><h5 class="card-title"></h5>
+                                           <ul class="list-group" id='eth_addresses'>
+                                           </ul>
+                                       </div>
+                                   </div>
+                               </div>
+                               </p>
+                           </div>
+                         </div></center>
+                 </div>
+             </div>
+         </div>
 
 				</div>
         </div>

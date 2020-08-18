@@ -8,7 +8,8 @@ router.get("/", async (req, res) => {
   res.status(200).json({
     deposit: config.hiveAccount,
     minAmount: config.min_amount,
-    maxAmount: maxAmount
+    maxAmount: maxAmount,
+    contract: config.contractAddress
   })
 })
 

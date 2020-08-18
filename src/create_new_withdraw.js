@@ -56,11 +56,10 @@ async function isHiveUsernameValid(username){
 function findAddressWithUsername(username){
   let current_time = new Date().getTime()
   return new Promise((resolve, reject) => {
-    database.findOne({ transactions: { $elemMatch: { username: username, expiration: {$gt: current_time + 172800000} } } }, (err, result) => { //more than 2 days from expiration
+    database.findOne({ transactions: { $elemMatch: { hiveUsername: username, expiration: {$gt: current_time + 172800000} } } }, (err, result) => { //more than 2 days from expiration
       if (err) reject(err)
       else {
         console.log(result)
-
         if (result == null) resolve(false) //not found, create new address/reuse old one
         else  resolve(result) //user have assigned address
       }

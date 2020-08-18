@@ -58,7 +58,7 @@ function isTransferInCorrectFormat(memo, amount){
   const symbol = amount.split(" ")[1]
 
   if (web3.utils.isAddress(memo) != true) return 'not_eth_address';
-  else if (symbol == "HIVE") return 'not_hive';
+  else if (symbol != "HIVE") return 'not_hive';
   else if (value < config.min_amount) return "under_min_amount"
   else if (config.max_amount > 0 && value > config.max_amount) return "over_max_amount"
   else return true;

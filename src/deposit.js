@@ -19,10 +19,12 @@ function start(){
     console.log("Start streaming HIVE!")
     stream
       .on('data', function(block) {
-        for (i in block.transactions){
-          let type = block.transactions[i].operations[0][0]
-          let data = block.transactions[i].operations[0][1]
-          if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount)
+        for (const transaction of block.transactions) {
+          for (const op of transaction){
+            let type = op[0]
+            let data = op[1]
+            if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount)
+          }
         }
       })
       .on('error', function() {

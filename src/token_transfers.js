@@ -54,8 +54,8 @@ function sendHive(to, value, hash){
   const tx = {
     from: config.hiveAccount,
     to: to,
-    amount: parseFloat(value).toFixed(3) + ' HIVE',
-    memo: `${parseFloat(value).toFixed(3)} WHIVE converted! Tx hash: ${hash}`
+    amount: '0.001 HIVE', //parseFloat(value).toFixed(3) + ' HIVE',
+    memo: `${parseFloat(value).toFixed(3)} WHIVE converted (on testnet)! Tx hash: ${hash}! Thank you!`
   }
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   const op = ["transfer", tx];

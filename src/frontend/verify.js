@@ -28,7 +28,7 @@ function getEthAddresses(cb){
 
 function getTotalSupply(contract, cb){
   $.ajax({
-    url : 'https://api.ethplorer.io/getTokenInfo/'+contract+'?apiKey=freekey',
+    url : 'https://kovan-api.ethplorer.io/getTokenInfo/'+contract+'?apiKey=freekey',
     type : 'GET',
     dataType:'json',
     success : function(data) {
@@ -61,7 +61,7 @@ function numberWithCommas(x) {
 function ethBalance(contract){
   getEthAddresses((addresses) => {
     for (i in addresses){
-      document.getElementById('eth_addresses').innerHTML += '<li class="list-group-item"><a href="https://etherscan.io/address/'+addresses[i]+'" target="_blank">'+addresses[i]+'</a></li>'
+      document.getElementById('eth_addresses').innerHTML += '<li class="list-group-item"><a href="https://kovan.etherscan.io/address/'+addresses[i]+'" target="_blank">'+addresses[i]+'</a></li>'
     }
     getTotalSupply(contract, (supply) => {
       supply = Number(supply) / 1000
@@ -84,7 +84,7 @@ async function getProjectTokens(addresses, contract, supply){
 function getBalanceForAddress(address, contract){
   return new Promise((resolve, reject) => {
     $.ajax({
-      url : 'https://api.ethplorer.io/getAddressInfo/'+address+'?token='+contract+'&apiKey=freekey',
+      url : 'https://kovan-api.ethplorer.io/getAddressInfo/'+address+'?token='+contract+'&apiKey=freekey',
       type : 'GET',
       dataType:'json',
       success : function(data) {

@@ -85,7 +85,8 @@ async function createNewAddress(username, data){
       database.countDocuments(async (err, result) =>  {
         if (err) reject(err)
         else {
-          var path = `m/44'/60'/0'/0/${result-1}`; //bip39 address index starts with 0, count with 1
+          console.log(result)
+          var path = `m/44'/60'/0'/0/${result}`; //bip39 address index starts with 0, count with 1
           const addrNode = await root.derive(path)
           const pubKey = await ethUtil.privateToPublic(addrNode._privateKey)
           const addr = '0x' + await ethUtil.publicToAddress(pubKey).toString('hex');

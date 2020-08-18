@@ -56,11 +56,13 @@ async function isHiveUsernameValid(username){
 function findAddressWithUsername(username){
   let current_time = new Date().getTime()
   return new Promise((resolve, reject) => {
-    database.findOne({"transactions.hiveUsername": username, "transactions.expiration": {$gt: current_time + 172800000}}, (err, result) => { //more tha 2 days from expiration
+    database.findOne({ transactions: { $elemMatch: { username: username, expiration: {$gt: current_time + 172800000} } } }, (err, result) => { //more than 2 days from expiration
       if (err) reject(err)
       else {
-        if (result == null) resolve(false)
-        else  resolve(result)
+        console.log(result)
+
+        if (result == null) resolve(false) //not found, create new address/reuse old one
+        else  resolve(result) //user have assigned address
       }
     })
   })
@@ -85,7 +87,6 @@ async function createNewAddress(username, data){
       database.countDocuments(async (err, result) =>  {
         if (err) reject(err)
         else {
-          console.log(result)
           var path = `m/44'/60'/0'/0/${result}`; //bip39 address index starts with 0, count with 1
           const addrNode = await root.derive(path)
           const pubKey = await ethUtil.privateToPublic(addrNode._privateKey)

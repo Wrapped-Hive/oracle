@@ -77,8 +77,9 @@ function sendRefund(to, amount, message){
 async function sendTokens(address, amount, from, full_amount){
   try {
     console.log(`Sending ${amount} WHIVE to ${address}, paid by ${from}`)
+    var fee = await getFee()
     var transferAmount_not_rounded = amount * 1000;
-    var transferAmount = parseFloat(transferAmount_not_rounded - ((transferAmount_not_rounded * config.fee_deposit) / 100)).toFixed(0)
+    var transferAmount = parseFloat(transferAmount_not_rounded - fee - ((transferAmount_not_rounded * config.fee_deposit) / 100)).toFixed(0)
     var contract = new web3.eth.Contract(abiArray.abi, config.contractAddress, {
       from: config.ethereumAddress
     });
@@ -101,7 +102,7 @@ async function sendTokens(address, amount, from, full_amount){
     var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
     var hash_share = receipt.transactionHash
     sendConfirmationMemo(hash_share, from)
-    sendFeeAmount(amount, hash_share)
+    sendFeeAmount(amount, hash_share, fee)
   } catch (e) {
     console.log(e)
     logger.debug.error(e)
@@ -124,19 +125,28 @@ async function getNonce(){ //use database, since web3.eth.getTransactionCount(co
   })
 }
 
-function sendFeeAmount(transferAmount_not_fee, hash){
-  let amount = parseFloat((transferAmount_not_fee * config.fee_deposit) / 100).toFixed(3)
+function getFee(){
+  return new Promise((resolve, reject) => {
+    database.findOne({type: "fee"}, (err, result) => {
+      if (err) reject(err)
+      else resolve(result.fee)
+      })
+  })
+}
+
+function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee){
+  let amount = parseFloat(((transferAmount_not_fee * config.fee_deposit) / 100) + fixed_fee).toFixed(3)
   const tx = {
     from: config.hiveAccount,
     to: config.fee_account,
     amount: amount + ' HIVE',
-    memo: `${config.fee_deposit}% fee for transaction: ${hash}!`
+    memo: `${config.fee_deposit}% + ${fixed_fee} fee  for transaction: ${hash}!`
   }
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)
-    .then(res => console.log(`Fee of ${amount} HIVE sent to ${config.fee_account} for ${hash}`))
+    .then(res => console.log(`Fee of ${amount} + ${fixed_fee} HIVE sent to ${config.fee_account} for ${hash}`))
     .catch(err => logger.debug.error(err));
 }
 

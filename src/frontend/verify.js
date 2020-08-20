@@ -83,21 +83,38 @@ async function getProjectTokens(addresses, contract, supply){
 
 function getBalanceForAddress(address, contract){
   return new Promise((resolve, reject) => {
-    $.ajax({
-      url : 'https://api.ethplorer.io/getAddressInfo/'+address+'?token='+contract+'&apiKey=freekey',
-      type : 'GET',
-      dataType:'json',
-      success : function(data) {
-        if(data.countTxs == 0) resolve(0)
-        else if (data.tokens[0]) resolve(data.tokens[0].balance / 1000)
-      },
-      error : function(request,error){
-        reject(error)
-      }
-    });
+    setTimeout(() => {
+      $.ajax({
+        url : 'https://api.ethplorer.io/getAddressInfo/'+address+'?apiKey=freekey',
+        type : 'GET',
+        dataType:'json',
+        success : function(data) {
+          if(data.countTxs == 0) resolve(0)
+          else if (data.tokens[0]) resolve(data.tokens[0].balance / 1000)
+        },
+        error : function(request,error){
+          reject(error)
+        }
+      });
+    }, 250)
   })
+}
+
+function getPrice(){
+  $.ajax({
+    url : 'https://api.coingecko.com/api/v3/coins/hive',
+    type : 'GET',
+    dataType:'json',
+    success : function(data) {
+      document.getElementById("price").innerHTML = '$'+parseFloat(data.market_data.current_price.usd).toFixed(3)
+    },
+    error : function(request,error){
+        alert("Failed to get data from server :(");
+    }
+  });
 }
 
 setTimeout(() => {
   getBalance()
+  getPrice()
 }, 1000)

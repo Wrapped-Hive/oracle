@@ -19,10 +19,12 @@ function start(){
     console.log("Start streaming HIVE!")
     stream
       .on('data', function(block) {
-        for (i in block.transactions){
-          let type = block.transactions[i].operations[0][0]
-          let data = block.transactions[i].operations[0][1]
-          if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount)
+        for (const transaction of block.transactions) {
+          for (const op of transaction){
+            let type = op[0]
+            let data = op[1]
+            if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount)
+          }
         }
       })
       .on('error', function() {
@@ -52,10 +54,13 @@ function processDeposit(sender, memo, amount){
 }
 
 function isTransferInCorrectFormat(memo, amount){
+  const value = Number(amount.split(" ")[0])
+  const symbol = amount.split(" ")[1]
+
   if (web3.utils.isAddress(memo) != true) return 'not_eth_address';
-  else if (!amount.includes("HIVE")) return 'not_hive';
-  else if (Number(amount.split(" ")[0]) < config.min_amount) return "under_min_amount"
-  else if (config.max_amount > 0 && amount.split(" ")[0] > config.max_amount) return "over_max_amount"
+  else if (symbol != "HIVE") return 'not_hive';
+  else if (value < config.min_amount) return "under_min_amount"
+  else if (config.max_amount > 0 && value > config.max_amount) return "over_max_amount"
   else return true;
 }
 

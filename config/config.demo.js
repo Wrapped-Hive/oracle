@@ -14,6 +14,7 @@ var config = {
   "max_amount": -2, //negative to disable
   "fee_deposit": 5, //fee in %
   "fee_account": "fee_hive_account", //send fees to this account
+  "fee_account_private_key": '5k...',
   "hive_api_nodes": [
     "https://api.hive.blog",
     "https://api.hivekings.com",

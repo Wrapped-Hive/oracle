@@ -13,6 +13,8 @@ var web3 = new Web3(new Web3.providers.HttpProvider(config.ethEndpoint));
 const mongo = require("../database/mongo.js")
 const database = mongo.get().db("ETH-HIVE").collection("status")
 
+const transfer_hive = require("./transfer_hive.js")
+
 function start(){
   try {
     stream = client.blockchain.getBlockStream({mode: dhive.BlockchainMode.Latest});
@@ -22,7 +24,7 @@ function start(){
         for (i in block.transactions){
           let type = block.transactions[i].operations[0][0]
           let data = block.transactions[i].operations[0][1]
-          if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount)
+          if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount, block.transactions[i].transaction_id)
         }
       })
       .on('error', function() {
@@ -42,13 +44,13 @@ function start(){
   }
 }
 
-function processDeposit(sender, memo, amount){
+function processDeposit(sender, memo, amount, tx_hash){
   let isCorrect = isTransferInCorrectFormat(memo, amount)
-  if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
-  else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
-  else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
-  else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' HIVE!');
-  else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!');
+  if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount, tx_hash);
+  else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!', tx_hash);
+  else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!', tx_hash);
+  else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' HIVE!', tx_hash);
+  else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!', tx_hash);
 }
 
 function isTransferInCorrectFormat(memo, amount){
@@ -59,22 +61,11 @@ function isTransferInCorrectFormat(memo, amount){
   else return true;
 }
 
-function sendRefund(to, amount, message){
-  const tx = {
-    from: config.hiveAccount,
-    to: to,
-    amount: amount,
-    memo: `Refund! Reason: ${message}`
-  }
-  const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
-  const op = ["transfer", tx];
-  client.broadcast
-    .sendOperations([op], key)
-    .then(res => console.log(`Refund of ${amount} sent to ${to}! Reason: ${message}`))
-    .catch(err => logger.debug.error(err));
+function sendRefund(to, amount, message, tx_hash){
+  transfer_hive.createTransaction(to, amount, `Refund! Reason: ${message}`)
 }
 
-async function sendTokens(address, amount, from, full_amount){
+async function sendTokens(address, amount, from, full_amount, tx_hash){
   try {
     console.log(`Sending ${amount} WHIVE to ${address}, paid by ${from}`)
     var transferAmount_not_rounded = amount * 1000;
@@ -101,11 +92,11 @@ async function sendTokens(address, amount, from, full_amount){
     var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
     var hash_share = receipt.transactionHash
     sendConfirmationMemo(hash_share, from)
-    sendFeeAmount(amount, hash_share)
+    sendFeeAmount(amount, hash_share, tx_hash)
   } catch (e) {
     console.log(e)
     logger.debug.error(e)
-    sendRefund(from, full_amount, `Internal server error`)
+    sendRefund(from, full_amount, `Internal server error`, tx_hash)
   }
 }
 
@@ -124,7 +115,7 @@ async function getNonce(){ //use database, since web3.eth.getTransactionCount(co
   })
 }
 
-function sendFeeAmount(transferAmount_not_fee, hash){
+function sendFeeAmount(transferAmount_not_fee, hash, tx_hash){
   let amount = parseFloat((transferAmount_not_fee * config.fee_deposit) / 100).toFixed(3)
   const tx = {
     from: config.hiveAccount,
@@ -156,14 +147,13 @@ function getRecomendedGasPrice(){
 }
 
 function sendConfirmationMemo(hash, hive_user){
-  console.log("Transaction sent! "+hash)
   const tx = {
-    from: config.hiveAccount,
+    from: config.messages.account,
     to: hive_user,
     amount: '0.001 HIVE',
     memo: `Tokens sent! Hash: ${hash}, network: Kovan!`
   }
-  const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
+  const key = dhive.PrivateKey.fromString(config.messages.private_key);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)

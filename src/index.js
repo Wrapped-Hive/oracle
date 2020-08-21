@@ -53,5 +53,6 @@ function main() {
   app.use('/get_addresses', require('./api/get_addresses.js'));
   app.use('/ping', require('./api/ping.js'));
   app.use('/status', require('./api/status.js'));
+  app.use('/balances', require('./api/get_whive_balances.js'));
   app.listen(8080)
 }

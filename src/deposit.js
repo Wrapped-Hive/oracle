@@ -20,7 +20,7 @@ function start(){
     stream
       .on('data', function(block) {
         for (const transaction of block.transactions) {
-          for (const op of transaction){
+          for (const op of transaction.operations){
             let type = op[0]
             let data = op[1]
             if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount)
@@ -44,9 +44,10 @@ function start(){
   }
 }
 
+
 async function processDeposit(sender, memo, amount){
   var fee = await getFee()
-  let isCorrect = isTransferInCorrectFormat(memo, amount, fee)
+  let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
   if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
   else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
   else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
@@ -163,7 +164,7 @@ function getRecomendedGasPrice(){
     axios
       .get(`https://ethgasstation.info/api/ethgasAPI.json?api-key=${config.ethgasstation_api}`)
       .then(response => {
-        if (response.data.fast &&  typeof response.data.fast == "number") resolve(response.data.fast / 10) //safeLow
+        if (response.data.safeLow &&  typeof response.data.safeLow == "number") resolve(response.data.safeLow / 10) //safeLow
         else reject("ethgasstation data is not number")
       })
       .catch(err => {

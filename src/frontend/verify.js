@@ -85,18 +85,20 @@ function getBalanceForAddress(address, contract){
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       $.ajax({
-        url : 'https://api.ethplorer.io/getAddressInfo/'+address+'?apiKey=freekey',
+        url : 'https://api.ethplorer.io/getAddressInfo/'+address+'?apiKey=freekey&token=0x11d147e8d39f59af00e159c4b1fe3a31d58a2c66',
         type : 'GET',
         dataType:'json',
         success : function(data) {
           if(data.countTxs == 0) resolve(0)
-          else if (data.tokens[0]) resolve(data.tokens[0].balance / 1000)
+          else {
+            resolve(data.tokens[0].balance / 1000)
+          }
         },
         error : function(request,error){
-          reject(error)
+          resolve(0)
         }
       });
-    }, 250)
+    }, 500)
   })
 }
 

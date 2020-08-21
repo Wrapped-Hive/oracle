@@ -18,15 +18,15 @@ var logger = require('./logs/logger.js');
 router.post("/", async (req, res) => {
   if(!req.body.username) res.status(200).json({success: false, message: "missing_username"})
   else {
-    let isUsernameValid = await isHiveUsernameValid(req.body.username)
+    let isUsernameValid = await isHiveUsernameValid(req.body.username.toLowerCase())
     if (isUsernameValid == true){
-      findAddressWithUsername(req.body.username)
+      findAddressWithUsername(req.body.username.toLowerCase())
         .then((result) => {
           if (result == false){
-            createNewTransaction(req.body.username)
+            createNewTransaction(req.body.username.toLowerCase())
               .then((result) => {
-                if (result == null) return createNewAddress(req.body.username)
-                else return reuseOldAddress(req.body.username, result)
+                if (result == null) return createNewAddress(req.body.username.toLowerCase())
+                else return reuseOldAddress(req.body.username.toLowerCase(), result)
               })
               .then((result) => {
                 res.status(200).json({success: true, message: "transaction_created", id: result.id, address: result.address, expiration: result.expiration})
@@ -59,7 +59,6 @@ function findAddressWithUsername(username){
     database.findOne({ transactions: { $elemMatch: { hiveUsername: username, expiration: {$gt: current_time + 172800000} } } }, (err, result) => { //more than 2 days from expiration
       if (err) reject(err)
       else {
-        console.log(result)
         if (result == null) resolve(false) //not found, create new address/reuse old one
         else  resolve(result) //user have assigned address
       }

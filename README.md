@@ -90,3 +90,5 @@ Collection: `status`
 ```
 
 Collection: `transactions`
+
+Collection: `errors`

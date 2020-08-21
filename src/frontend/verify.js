@@ -26,20 +26,6 @@ function getEthAddresses(cb){
   });
 }
 
-function getTotalSupply(contract, cb){
-  $.ajax({
-    url : 'https://api.ethplorer.io/getTokenInfo/'+contract+'?apiKey=freekey',
-    type : 'GET',
-    dataType:'json',
-    success : function(data) {
-      cb(data.totalSupply)
-    },
-    error : function(request,error){
-      alert("Failed to get data from server :(");
-    }
-  });
-}
-
 async function getBalance(){
   getConfig((account, contract) => {
     hive.api.getAccounts([account], function(err, result) {
@@ -63,17 +49,14 @@ function ethBalance(contract){
     for (i in addresses){
       document.getElementById('eth_addresses').innerHTML += '<li class="list-group-item"><a href="https://etherscan.io/address/'+addresses[i]+'" target="_blank">'+addresses[i]+'</a></li>'
     }
-    getTotalSupply(contract, (supply) => {
-      supply = Number(supply) / 1000
-      getProjectTokens(addresses, contract, supply)
-    })
+    getProjectTokens(addresses, contract)
   })
 }
 
 async function getProjectTokens(addresses, contract, supply){
-  let balance = await getWhiveBalance()
-  console.log(supply - Number(balance))
-  let number_1 = parseFloat(supply - Number(balance)).toFixed(3)
+  let data = await getWhiveBalance()
+  console.log(data.supply - Number(data.balance))
+  let number_1 = parseFloat(data.supply - Number(data.balance)).toFixed(3)
   let number = number_1.split('.')
   document.getElementById("whive_balance").innerHTML = numberWithCommas(number[0]) + '<small>.'+number[1]+'</small>'
   getPrice(number_1)
@@ -86,7 +69,7 @@ function getWhiveBalance(){
       type : 'GET',
       dataType:'json',
       success : function(data) {
-        resolve(data.balance)
+        resolve(data)
       },
       error : function(request,error){
         alert("Failed to get data from server :(, some data might be inaccurate!");

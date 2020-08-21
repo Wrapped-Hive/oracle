@@ -62,7 +62,17 @@ function sendHive(to, value, hash){
   client.broadcast
     .sendOperations([op], key)
     .then(res => console.log(res))
-    .catch(err => logger.debug.error(err));
+    .catch((err) => {
+      logger.debug.error(err)
+      logToDatabase(err, `Failed to send ${parseFloat(value).toFixed(3)} HIVE to ${to} for tranasction: ${hash}`)
+    });
+}
+
+function logToDatabase(err, message){
+  mongo.get().db("ETH-HIVE").collection("errors").insertOne({type: "payment-withdraw", error: err, message: message}, (err, result) => {
+    if (err) logger.debug.error(err)
+    else console.log("Error was stored to database!")
+    })
 }
 
 module.exports.processTokenTransfer = processTokenTransfer

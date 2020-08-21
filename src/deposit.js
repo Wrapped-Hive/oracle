@@ -80,7 +80,10 @@ function sendRefund(to, amount, message){
   client.broadcast
     .sendOperations([op], key)
     .then(res => console.log(`Refund of ${amount} sent to ${to}! Reason: ${message}`))
-    .catch(err => logger.debug.error(err));
+    .catch((err) => {
+      logger.debug.error(err)
+      logToDatabase(err, `Error while sending ${amount} refund for ${to}`)
+    });
 }
 
 async function sendTokens(address, amount, from, full_amount){
@@ -116,6 +119,7 @@ async function sendTokens(address, amount, from, full_amount){
     console.log(e)
     logger.debug.error(e)
     sendRefund(from, full_amount, `Internal server error`)
+    logToDatabase(e, `Error while sending ${amount} tokens to ${address}, but refund was attempted.`)
   }
 }
 
@@ -156,7 +160,10 @@ function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee){
   client.broadcast
     .sendOperations([op], key)
     .then(res => console.log(`Fee of ${amount} + ${fixed_fee} HIVE sent to ${config.fee_account} for ${hash}`))
-    .catch(err => logger.debug.error(err));
+    .catch((err) => {
+      logger.debug.error(err)
+      logToDatabase(err, `Error while sending ${amount} HIVE fee`)
+    });
 }
 
 function getRecomendedGasPrice(){
@@ -180,14 +187,21 @@ function sendConfirmationMemo(hash, hive_user){
     from: config.hiveAccount,
     to: hive_user,
     amount: '0.001 HIVE',
-    memo: `Tokens sent! Hash: ${hash}, network: Kovan!`
+    memo: `Tokens sent! Hash: ${hash}!`
   }
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)
-    .then(res => console.log(`Confirmation send to ${hive_user} for ${hash}`))
+    .then(res => console.log(`Confirmation sent to ${hive_user} for ${hash}`))
     .catch(err => logger.debug.error(err));
+}
+
+function logToDatabase(err, message){
+  mongo.get().db("ETH-HIVE").collection("errors").insertOne({type: "payment-deposit", error: err, message: message}, (err, result) => {
+    if (err) logger.debug.error(err)
+    else console.log("Error was stored to database!")
+    })
 }
 
 module.exports.start = start

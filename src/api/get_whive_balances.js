@@ -12,13 +12,13 @@ var web3 = new Web3(new Web3.providers.HttpProvider(config.ethEndpoint));
 const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 
 router.get("/", (req, res) => {
-  value = myCache.get( "balances" );
-  if (value == undefined){
+  value = myCache.mget( ["balances", "supply"] );
+  if (Object.keys(value).length === 0 && value.constructor === Object){
     getAddresses()
       .then((result) => {
         return getAddressBalance(result)
       })
-      .then((result) => {
+      .then(async (result) => {
         let array = result.sort(function(a, b) {
           return a.index - b.index;
         });
@@ -26,19 +26,24 @@ router.get("/", (req, res) => {
         for (i in array){
           balance += Number(array[i].balance)
         }
+        let supply = await getSupply()
         obj = { my: "balances", variable: array };
-        cache = myCache.set( "balances", obj, 3600 );
-        res.status(200).json({success: true, message: "Success", balance: balance, data: array})
+        obj2 = { my: "supply", variable: supply };
+        cache = myCache.mset([
+        	{key: "balances", val: obj, ttl: 3600},
+        	{key: "supply", val: obj2, ttl: 3600},
+        ])
+        res.status(200).json({success: true, message: "Success", balance: balance, supply: supply, data: array})
       })
       .catch((err) => {
         console.log(err)
       })
   } else {
     let balance = 0
-    for (i in value.variable){
-      balance += Number(value.variable[i].balance)
+    for (i in value.balances.variable){
+      balance += Number(value.balances.variable[i].balance)
     }
-    res.status(200).json({success: true, message: "Success", balance: balance, data: value.variable})
+    res.status(200).json({success: true, message: "Success", balance: balance, supply: value.supply.variable, data: value.balances.variable})
   }
 })
 
@@ -83,6 +88,23 @@ function getBalance(address, contract){
         resolve(object)
       })
   })
+}
+
+async function getSupply(){
+  var totalSupplyHex = web3.utils.sha3('totalSupply()').substring(0,10);
+  var contractAddress = config.contractAddress;
+  var totalSupplyCall = getDataObj(contractAddress, totalSupplyHex, []);
+  var totalSupply = await web3.eth.call(totalSupplyCall);
+  return parseInt(totalSupply, 16) / 1000; //to decimal and to 3 decimal places
+}
+
+function getDataObj(to, func, arrVals) {
+  var val = "";
+  for (var i = 0; i < arrVals.length; i++) val += this.padLeft(arrVals[i], 64);
+  return {
+    to: to,
+    data: func + val
+  };
 }
 
 

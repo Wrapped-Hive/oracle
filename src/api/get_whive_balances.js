@@ -22,15 +22,23 @@ router.get("/", (req, res) => {
         let array = result.sort(function(a, b) {
           return a.index - b.index;
         });
+        let balance = 0
+        for (i in array){
+          balance += Number(array[i].balance)
+        }
         obj = { my: "balances", variable: array };
         cache = myCache.set( "balances", obj, 3600 );
-        res.status(200).json({success: true, message: "Success", data: array})
+        res.status(200).json({success: true, message: "Success", balance: balance, data: array})
       })
       .catch((err) => {
         console.log(err)
       })
   } else {
-    res.status(200).json({success: true, message: "Success", data: value})
+    let balance = 0
+    for (i in value.variable){
+      balance += Number(value.variable[i].balance)
+    }
+    res.status(200).json({success: true, message: "Success", balance: balance, data: value.variable})
   }
 })
 
@@ -59,7 +67,7 @@ async function getAddressBalance(addresses){
     addresses.forEach(function(item, i) {
       getBalance(addresses[i], contract)
         .then((result) => {
-          balances.push({address: addresses[i], balance: result.balance, index: i})
+          balances.push({address: addresses[i], balance: Number(result.balance), index: i})
           a++
         })
     })

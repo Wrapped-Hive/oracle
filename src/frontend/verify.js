@@ -35,7 +35,7 @@ function getTotalSupply(contract, cb){
       cb(data.totalSupply)
     },
     error : function(request,error){
-        alert("Failed to get data from server :(");
+      alert("Failed to get data from server :(");
     }
   });
 }
@@ -71,44 +71,40 @@ function ethBalance(contract){
 }
 
 async function getProjectTokens(addresses, contract, supply){
-  let balance = 0
-  for (i in addresses){
-    balance += await getBalanceForAddress(addresses[i], contract)
-  }
+  let balance = await getWhiveBalance()
   console.log(supply - Number(balance))
   let number_1 = parseFloat(supply - Number(balance)).toFixed(3)
   let number = number_1.split('.')
   document.getElementById("whive_balance").innerHTML = numberWithCommas(number[0]) + '<small>.'+number[1]+'</small>'
+  getPrice(number_1)
 }
 
-function getBalanceForAddress(address, contract){
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      $.ajax({
-        url : 'https://api.ethplorer.io/getAddressInfo/'+address+'?apiKey=freekey&token=0x11d147e8d39f59af00e159c4b1fe3a31d58a2c66',
-        type : 'GET',
-        dataType:'json',
-        success : function(data) {
-          if(data.countTxs == 0) resolve(0)
-          else {
-            resolve(data.tokens[0].balance / 1000)
-          }
-        },
-        error : function(request,error){
-          resolve(0)
-        }
-      });
-    }, 500)
+function getWhiveBalance(){
+  return  new Promise((resolve, reject)  => {
+    $.ajax({
+      url : '/balances',
+      type : 'GET',
+      dataType:'json',
+      success : function(data) {
+        resolve(data.balance)
+      },
+      error : function(request,error){
+        alert("Failed to get data from server :(, some data might be inaccurate!");
+        resolve(0)
+      }
+    });
   })
 }
 
-function getPrice(){
+function getPrice(balance){
   $.ajax({
     url : 'https://api.coingecko.com/api/v3/coins/hive',
     type : 'GET',
     dataType:'json',
     success : function(data) {
-      document.getElementById("price").innerHTML = '$'+parseFloat(data.market_data.current_price.usd).toFixed(3)
+      let number = parseFloat(data.market_data.current_price.usd).toFixed(3) * balance + ''
+      let value = number.split('.')
+      document.getElementById("price").innerHTML =numberWithCommas(value[0]) + '<small>.'+value[1]+'</small>'
     },
     error : function(request,error){
         alert("Failed to get data from server :(");
@@ -116,7 +112,6 @@ function getPrice(){
   });
 }
 
-setTimeout(() => {
+document.addEventListener('DOMContentLoaded', function() {
   getBalance()
-  getPrice()
-}, 1000)
+}, false);

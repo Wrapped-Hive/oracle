@@ -44,16 +44,18 @@ function start(){
   }
 }
 
-function processDeposit(sender, memo, amount){
-  let isCorrect = isTransferInCorrectFormat(memo, amount)
+async function processDeposit(sender, memo, amount){
+  var fee = await getFee()
+  let isCorrect = isTransferInCorrectFormat(memo, amount, fee)
   if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
   else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
   else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
   else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' HIVE!');
   else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!');
+  else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' HIVE!');
 }
 
-function isTransferInCorrectFormat(memo, amount){
+async function isTransferInCorrectFormat(memo, amount, fee){
   const value = Number(amount.split(" ")[0])
   const symbol = amount.split(" ")[1]
 
@@ -61,6 +63,7 @@ function isTransferInCorrectFormat(memo, amount){
   else if (symbol != "HIVE") return 'not_hive';
   else if (value < config.min_amount) return "under_min_amount"
   else if (config.max_amount > 0 && value > config.max_amount) return "over_max_amount"
+  else if (value <= fee * (1 + config.fee_deposit)) return "fee_higher_than_deposit"
   else return true;
 }
 

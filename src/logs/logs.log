@@ -1,0 +1,148 @@
+[2020-08-21T19:59:04.270] [ERROR] debug - Error: Transaction was not mined within 750 seconds, please make sure your transaction was properly sent. Be aware that it might still be mined!
+    at Object.TransactionError (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:96:21)
+    at C:\Users\filip\desktop\oracle\node_modules\web3-core-method\src\index.js:519:40
+    at runMicrotasks (<anonymous>)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5) {
+  receipt: undefined
+}
+[2020-08-21T20:29:41.432] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:32:49.267] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:37:26.134] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:38:13.317] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:40:42.782] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:41:40.221] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:43:37.719] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:44:38.849] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:47:49.951] [ERROR] debug - Error: Chain with name 3 not supported
+    at Function.Common._getChainParams (C:\Users\filip\desktop\oracle\node_modules\ethereumjs-common\dist\index.js:58:15)
+    at Common.setChain (C:\Users\filip\desktop\oracle\node_modules\ethereumjs-common\dist\index.js:68:40)
+    at new Common (C:\Users\filip\desktop\oracle\node_modules\ethereumjs-common\dist\index.js:27:34)
+    at new Transaction (C:\Users\filip\desktop\oracle\node_modules\ethereumjs-tx\dist\transaction.js:65:28)
+    at sendTokens (C:\Users\filip\desktop\oracle\src\deposit.js:111:14)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-08-21T20:48:53.031] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T20:50:46.035] [ERROR] debug - Error: Returned error: invalid sender
+    at Object.ErrorResponse (C:\Users\filip\desktop\oracle\node_modules\web3-core-helpers\src\errors.js:30:19)
+    at onJsonrpcResult (C:\Users\filip\desktop\oracle\node_modules\web3-core-requestmanager\src\index.js:172:36)
+    at XMLHttpRequest.request.onreadystatechange (C:\Users\filip\desktop\oracle\node_modules\web3-providers-http\src\index.js:111:13)
+    at XMLHttpRequestEventTarget.dispatchEvent (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request-event-target.js:34:22)
+    at XMLHttpRequest._setReadyState (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:208:14)
+    at XMLHttpRequest._onHttpResponseEnd (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:318:14)
+    at IncomingMessage.<anonymous> (C:\Users\filip\desktop\oracle\node_modules\xhr2-cookies\dist\xml-http-request.js:289:61)
+    at IncomingMessage.emit (events.js:327:22)
+    at endReadableNT (_stream_readable.js:1221:12)
+    at processTicksAndRejections (internal/process/task_queues.js:84:21) {
+  data: null
+}
+[2020-08-21T21:16:30.934] [ERROR] debug - ReferenceError: result is not defined
+    at sendFeeAmount (C:\Users\filip\desktop\oracle\src\deposit.js:157:59)
+    at runMicrotasks (<anonymous>)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)

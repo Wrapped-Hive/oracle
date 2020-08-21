@@ -25,7 +25,7 @@ function getRecomendedGasPrice(){
     axios
       .get(`https://ethgasstation.info/api/ethgasAPI.json?api-key=${config.ethgasstation_api}`)
       .then(response => {
-        if (response.data.safeLow &&  typeof response.data.safeLow == "number") resolve(response.data.safeLow / 10) //safeLow
+        if (response.data.average &&  typeof response.data.average == "number") resolve(response.data.average / 10) //safeLow
         else reject("ethgasstation data is not number")
       })
       .catch(err => {
@@ -34,7 +34,6 @@ function getRecomendedGasPrice(){
       });
   })
 }
-calculate()
 
 function getHiveInEth(eth_fee){
   return new Promise((resolve, reject) => {

@@ -3,12 +3,15 @@ const Web3 = require("web3")
 const Tx = require('ethereumjs-tx').Transaction;
 const axios = require('axios');
 var logger = require('./logs/logger.js');
+const NodeCache = require( "node-cache" );
 
 var abiArray = require("./abi.js")
 const config = require("../config/config.js")
 
 var client = new dhive.Client(config.hive_api_nodes);
 var web3 = new Web3(new Web3.providers.HttpProvider(config.ethEndpoint));
+
+const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 
 const mongo = require("../database/mongo.js")
 const database = mongo.get().db("ETH-HIVE").collection("status")
@@ -64,7 +67,7 @@ async function isTransferInCorrectFormat(memo, amount, fee){
   else if (symbol != "HIVE") return 'not_hive';
   else if (value < config.min_amount) return "under_min_amount"
   else if (config.max_amount > 0 && value > config.max_amount) return "over_max_amount"
-  else if (value <= fee * (1 + config.fee_deposit)) return "fee_higher_than_deposit"
+  else if (value <= fee * (1 + (config.fee_deposit / 100))) return "fee_higher_than_deposit"
   else return true;
 }
 
@@ -91,14 +94,14 @@ async function sendTokens(address, amount, from, full_amount){
     console.log(`Sending ${amount} WHIVE to ${address}, paid by ${from}`)
     var fee = await getFee()
     var transferAmount_not_rounded = amount * 1000;
-    var transferAmount = parseFloat(transferAmount_not_rounded - fee - ((transferAmount_not_rounded * config.fee_deposit) / 100)).toFixed(0)
+    var transferAmount = parseFloat(transferAmount_not_rounded - (fee * 1000) - ((transferAmount_not_rounded * config.fee_deposit) / 100)).toFixed(0)
     var contract = new web3.eth.Contract(abiArray.abi, config.contractAddress, {
       from: config.ethereumAddress
     });
     const contractFunction = contract.methods.mint(address, transferAmount);
     const functionAbi = contractFunction.encodeABI();
     var gasPriceGwei = await getRecomendedGasPrice();
-    var nonce = await getNonce()
+    var nonce = await getNonce() //web3.eth.getTransactionCount(config.ethereumAddress) 
     var rawTransaction = {
         "from": config.ethereumAddress,
         "nonce": "0x" + nonce.toString(16),
@@ -113,8 +116,9 @@ async function sendTokens(address, amount, from, full_amount){
     var serializedTx = tx.serialize();
     var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
     var hash_share = receipt.transactionHash
+    let gas_spent = receipt.gasUsed
     sendConfirmationMemo(hash_share, from)
-    sendFeeAmount(amount, hash_share, fee)
+    sendFeeAmount(amount, hash_share, fee, gas_spent, gasPriceGwei, from)
   } catch (e) {
     console.log(e)
     logger.debug.error(e)
@@ -147,23 +151,72 @@ function getFee(){
   })
 }
 
-function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee){
-  let amount = parseFloat(((transferAmount_not_fee * config.fee_deposit) / 100) + fixed_fee).toFixed(3)
+async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent, gasPriceGwei, to){
+  try {
+    let hive_in_eth = await getHiveEthPrice()
+    let fee = ((gas_spent * gasPriceGwei) / 1000000000) / hive_in_eth //how much  did we actually burned?
+    let amount_1 = (transferAmount_not_fee * config.fee_deposit) / 100 // % fee
+    let unspent_fee = Number(fixed_fee) - Number(fee) - Number(amount_1) //remove spent & percentage from reserved fee
+    let amount_2 = Number(amount_1) + Number(fee)
+    let amount = parseFloat(amount_2).toFixed(3)
+    const tx = {
+      from: config.hiveAccount,
+      to: config.fee_account,
+      amount: amount + ' HIVE',
+      memo: `${config.fee_deposit}% + ${parseFloat(fee).toFixed(3)} fee  for transaction: ${hash}!`
+    }
+    const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
+    const op = ["transfer", tx];
+    client.broadcast
+      .sendOperations([op], key)
+      .then(res => console.log(`Fee of ${amount_1} + ${fixed_fee} HIVE sent to ${config.fee_account} for ${hash}`))
+      .catch((err) => {
+        logger.debug.error(err)
+        logToDatabase(err, `Error while sending ${amount} HIVE fee`)
+      });
+    refundfeeToUser(unspent_fee, to)
+  } catch (err) {
+    logger.debug.error(err)
+    logToDatabase(err, `Error cought sending fee`)
+  }
+}
+
+function refundfeeToUser(unspent, to){
   const tx = {
     from: config.hiveAccount,
-    to: config.fee_account,
-    amount: amount + ' HIVE',
-    memo: `${config.fee_deposit}% + ${fixed_fee} fee  for transaction: ${hash}!`
+    to: to,
+    amount: parseFloat(unspent).toFixed(3) + ' HIVE',
+    memo: `Refund of ${parseFloat(unspent).toFixed(3)} HIVE (unspent transaction fees)!`
   }
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)
-    .then(res => console.log(`Fee of ${amount} + ${fixed_fee} HIVE sent to ${config.fee_account} for ${hash}`))
+    .then(res => console.log(`Fee refund of ${unspent} HIVE sent to ${to}.`))
     .catch((err) => {
       logger.debug.error(err)
-      logToDatabase(err, `Error while sending ${amount} HIVE fee`)
+      logToDatabase(err, `Error while refunding ${unspent} HIVE fee`)
     });
+}
+
+function getHiveEthPrice(){
+  return new Promise((resolve, reject) => {
+    value = myCache.get( "rate" );
+    if (value == undefined){
+      axios
+        .get('https://api.coingecko.com/api/v3/coins/hive')
+        .then((result) => {
+          obj = { my: "exchange_rate", rate: result.data.market_data.current_price.eth };
+          success = myCache.set( "rate", obj, 3600 );
+          resolve(result.data.market_data.current_price.eth)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    } else {
+      resolve(value.rate)
+    }
+  })
 }
 
 function getRecomendedGasPrice(){
@@ -171,7 +224,7 @@ function getRecomendedGasPrice(){
     axios
       .get(`https://ethgasstation.info/api/ethgasAPI.json?api-key=${config.ethgasstation_api}`)
       .then(response => {
-        if (response.data.safeLow &&  typeof response.data.safeLow == "number") resolve(response.data.safeLow / 10) //safeLow
+        if (response.data.fast &&  typeof response.data.fast == "number") resolve(response.data.fast / 10) //safeLow
         else reject("ethgasstation data is not number")
       })
       .catch(err => {

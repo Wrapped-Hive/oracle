@@ -92,3 +92,9 @@ Collection: `status`
 Collection: `transactions`
 
 Collection: `errors`
+
+---
+
+Multi-signature API:
+
+POST: type (refund, withdraw), related_transaction (either HIVE or Ethereum transaction), BIP39 index for withdraws, amount, to.

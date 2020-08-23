@@ -20,7 +20,7 @@ const database = mongo.get().db("ETH-HIVE").collection("status")
 
 function start(){
   try {
-    stream = client.blockchain.getBlockStream({mode: dhive.BlockchainMode.Latest});
+    stream = client.blockchain.getBlockStream({mode: dhive.BlockchainMode.Irreversible});
     console.log("Start streaming HIVE!")
     stream
       .on('data', function(block) {

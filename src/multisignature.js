@@ -2,6 +2,7 @@ const dhive = require("@hiveio/dhive")
 const config = require("../config/config.js")
 const axios = require('axios');
 const hive  = require('@hiveio/hive-js')
+const hiveTx = require('hive-tx')
 
 var client = new dhive.Client(config.hive_api_nodes);
 var logger = require('./logs/logger.js');
@@ -28,13 +29,20 @@ async function sign(to, amount, memo, trxId, type){
               ref_block_num,
               ref_block_prefix,
           }
-  const signMultisig = client.broadcast.sign(tx, dive.PrivateKey.from(config.hivePrivateKey));
+
+  // const signMultisig = new hiveTx.Transaction()
+  // await signMultisig.create(operations, expiration = 3590)
+  // const privateKey = hiveTx.PrivateKey.from(config.hivePrivateKey)
+  // await signMultisig.sign(privateKey)
+  const signMultisig = hive.auth.signTransaction(tx, [config.hivePrivateKey]); //client.broadcast.sign(tx, dhive.PrivateKey.from(config.hivePrivateKey));
+
   axios.post(config.validators[0], {
     tx: signMultisig,
     trxId: trxId,
     type: type
   })
   .then(function (response) {
+    console.log(response.data)
     if (response.data.success == true){
       verifyTransaction(response.data.trxId, to, amount, memo)
     } else {

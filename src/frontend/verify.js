@@ -87,7 +87,8 @@ function getPrice(balance){
     success : function(data) {
       let number = parseFloat(data.market_data.current_price.usd).toFixed(3) * balance + ''
       let value = number.split('.')
-      document.getElementById("price").innerHTML =numberWithCommas(value[0]) + '<small>.'+parseFloat(value[1]).toFixed(3)+'</small>'
+      let decimals = value[1].substring(0, 2)
+      document.getElementById("price").innerHTML =numberWithCommas(value[0]) + '<small>.'+decimals+'</small>'
     },
     error : function(request,error){
         alert("Failed to get data from server :(");

@@ -8,7 +8,7 @@ const database = mongo.get().db("ETH-HIVE").collection("status")
 async function calculate(){
   getRecomendedGasPrice()
     .then((result) => {
-      let eth_fee = (result * 80000) / 1000000000 //gas price * gas limit / 1000000000 = ETH
+      let eth_fee = (result * 150000) / 1000000000 //gas price * gas limit / 1000000000 = ETH
       return getHiveInEth(eth_fee)
     })
     .then((result) => {

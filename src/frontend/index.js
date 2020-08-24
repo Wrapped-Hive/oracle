@@ -103,3 +103,23 @@ function displayDetails(){
 function copy(address){
   navigator.clipboard.writeText(address);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (localStorage.getItem("disclaimer") != 'true'){
+    Swal.fire({
+      title: 'Disclaimer',
+      html: "This app is still in beta, use at your own risk!<br><small>You will not see this message again</small>",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'I understand!'
+    }).then((result) => {
+      if (result.value) {
+        localStorage.setItem("disclaimer", 'true');
+      } else {
+        window.location.href = "http://hive.io";
+      }
+    })
+  }
+}, false);

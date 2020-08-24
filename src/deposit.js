@@ -26,7 +26,7 @@ function start(){
           for (const op of transaction.operations){
             let type = op[0]
             let data = op[1]
-            if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount)
+            if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount, transaction.transaction_id)
           }
         }
       })
@@ -48,15 +48,50 @@ function start(){
 }
 
 
-async function processDeposit(sender, memo, amount){
-  var fee = await getFee()
-  let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
-  if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
-  else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
-  else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
-  else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' HIVE!');
-  else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!');
-  else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' HIVE!');
+async function processDeposit(sender, memo, amount, id){
+  isAlreadyProcessed(id)
+    .then(async (result) => {
+      if (result == false){
+        insertTransaction(id)
+        var fee = await getFee()
+        let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
+        if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
+        else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
+        else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
+        else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' HIVE!');
+        else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!');
+        else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' HIVE!');
+      } else {
+        console.log("Hive transaction already processed!")
+      }
+    })
+    .catch((err) => {
+      logger.debug.error(err)
+      logToDatabase(err, `Error while chekcking transaction ${id}`)
+    })
+}
+
+function isAlreadyProcessed(id){
+  return new Promise((resolve, reject) => {
+    let db_tx  = mongo.get().db("ETH-HIVE").collection("hive_transactions")
+    db_tx.findOne({tx: id}, (err, result) => {
+      if (err) reject(err)
+      else {
+        if (result == null) resolve(false)
+        else resolve(true)
+      }
+    })
+  })
+}
+
+function insertTransaction(id){
+  let db_tx  = mongo.get().db("ETH-HIVE").collection("hive_transactions")
+  db_tx.insertOne({tx: id}, (err, result) => {
+    if (err){
+      logger.debug.error(err)
+      logToDatabase(err, `Error inserting new transaction: ${id}`)
+    }
+  })
 }
 
 async function isTransferInCorrectFormat(memo, amount, fee){
@@ -101,7 +136,7 @@ async function sendTokens(address, amount, from, full_amount){
     const contractFunction = contract.methods.mint(address, transferAmount);
     const functionAbi = contractFunction.encodeABI();
     var gasPriceGwei = await getRecomendedGasPrice();
-    var nonce = await getNonce() //web3.eth.getTransactionCount(config.ethereumAddress) 
+    var nonce = await getNonce() //web3.eth.getTransactionCount(config.ethereumAddress)
     var rawTransaction = {
         "from": config.ethereumAddress,
         "nonce": "0x" + nonce.toString(16),

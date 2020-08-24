@@ -83,7 +83,7 @@ function displayDetails(){
                 <p>ID: ${data.id}</p>
                 <p>Address: ${data.address} <i class="fa fa-copy" onClick="copy('${data.address}')"></i></p>
                 <p>Expiration: ${new Date(data.expiration)}</p>
-                <button class="mt-1 btn btn-primary" onClick='requestMetaMask("${data.address}")'>Send with MetaMask</button>
+                <button class="mt-1 btn" onClick='requestMetaMask("${data.address}")'><img srcset="/assets/images/metamask.png 10x"></button>
               </div>
             </div>
           </div>

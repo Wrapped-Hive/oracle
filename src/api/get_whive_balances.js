@@ -84,7 +84,7 @@ function getBalance(address, contract){
   return new Promise(async (resolve, reject) => {
     contract.methods.balanceOf(address).call()
       .then((result) => {
-        let object = {address: address, balance: result}
+        let object = {address: address, balance: result/1000}
         resolve(object)
       })
   })

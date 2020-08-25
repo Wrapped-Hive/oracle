@@ -46,7 +46,8 @@ function main() {
   track.start((result) => {
     transfers.processTokenTransfer(result)
   })
-  setTimeout(() => {
+  calculate_fee.calculate()
+  setInterval(() => {
     calculate_fee.calculate()
   }, 1000 * 60 * 60)
   app.use('/create', require('./create_new_withdraw.js'));

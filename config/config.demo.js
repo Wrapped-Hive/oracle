@@ -25,7 +25,8 @@ var config = {
     "chainId": 3, //3: ropsten, 1: mainnet,
     "chain": "ropsten", //mainnet...
     "gasLimit": 100000
-  }
+  },
+  "coingecko_api": "secret"
 }
 
 

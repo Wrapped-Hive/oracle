@@ -1,7 +1,6 @@
 const mongo = require("../../database/mongo.js")
 const express = require('express')
 var router = express.Router();
-const NodeCache = require( "node-cache" );
 
 const config = require("../../config/config.js")
 var abiArray = require("../abi.js")
@@ -9,10 +8,8 @@ var abiArray = require("../abi.js")
 const Web3 = require("web3")
 var web3 = new Web3(new Web3.providers.HttpProvider(config.ethEndpoint));
 
-const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
-
 router.get("/", (req, res) => {
-  if (!req.query.apiKey || req.query.apiKey != 'secret'){
+  if (!req.query.apiKey || req.query.apiKey != config.coingecko_api){
     res.status(401).json({success: false, message: 'Wrong API key'})
   } else {
     getAddresses()

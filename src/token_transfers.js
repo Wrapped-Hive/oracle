@@ -19,7 +19,7 @@ async function processTokenTransfer(data){
 function isTxAlreadyProcessed(tx_data, db_data){
   database.collection('transactions').findOne({transactionHash: tx_data.transactionHash}, (err, result) => {
     if (err) logger.debug.error(err);
-    else if (result != null) console.log("Tx already processed.")
+    else if (result != null) return;//console.log("Tx already processed.")
     else processHiveTransfer(tx_data, db_data)
   })
 }

@@ -16,7 +16,7 @@ const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 const mongo = require("../database/mongo.js")
 const database = mongo.get().db("ETH-HIVE").collection("status")
 
-let alreadyProcessed = []
+var alreadyProcessed = []
 
 function start(){
   try {
@@ -55,6 +55,7 @@ async function processDeposit(sender, memo, amount, id){
     isAlreadyProcessed(id)
       .then(async (result) => {
         if (result == false){
+          alreadyProcessed.push(id)
           insertTransaction(id)
           var fee = await getFee()
           let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)

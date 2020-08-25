@@ -52,11 +52,11 @@ function start(){
 
 async function processDeposit(sender, memo, amount, id){
   if (!alreadyProcessed.includes(id)){
+    insertTransaction(id)
     isAlreadyProcessed(id)
       .then(async (result) => {
         if (result == false){
           alreadyProcessed.push(id)
-          insertTransaction(id)
           var fee = await getFee()
           let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
           if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);

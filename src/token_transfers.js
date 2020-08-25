@@ -11,7 +11,7 @@ var logger = require('./logs/logger.js');
 async function processTokenTransfer(data){
   database.collection("addresses").findOne({ $text: { $search: data.to, $caseSensitive: false } }, (err, result) => {
     if (err) logger.debug.error(err);
-    else if (result == null) console.log("Address not ours")
+    else if (result == null) //console.log("Address not ours")
     else isTxAlreadyProcessed(data, result)
   })
 }

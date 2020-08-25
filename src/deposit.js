@@ -16,6 +16,8 @@ const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 const mongo = require("../database/mongo.js")
 const database = mongo.get().db("ETH-HIVE").collection("status")
 
+let alreadyProcessed = []
+
 function start(){
   try {
     stream = client.blockchain.getBlockStream({mode: dhive.BlockchainMode.Latest});
@@ -49,26 +51,30 @@ function start(){
 
 
 async function processDeposit(sender, memo, amount, id){
-  isAlreadyProcessed(id)
-    .then(async (result) => {
-      if (result == false){
-        insertTransaction(id)
-        var fee = await getFee()
-        let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
-        if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
-        else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
-        else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
-        else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' HIVE!');
-        else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!');
-        else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' HIVE!');
-      } else {
-        console.log("Hive transaction already processed!")
-      }
-    })
-    .catch((err) => {
-      logger.debug.error(err)
-      logToDatabase(err, `Error while chekcking transaction ${id}`)
-    })
+  if (!alreadyProcessed.includes(id)){
+    isAlreadyProcessed(id)
+      .then(async (result) => {
+        if (result == false){
+          insertTransaction(id)
+          var fee = await getFee()
+          let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
+          if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
+          else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
+          else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
+          else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' HIVE!');
+          else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!');
+          else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' HIVE!');
+        } else {
+          console.log("Hive transaction already processed!")
+        }
+      })
+      .catch((err) => {
+        logger.debug.error(err)
+        logToDatabase(err, `Error while chekcking transaction ${id}`)
+      })
+  } else {
+    console.log("Hive transaction already processed!")
+  }
 }
 
 function isAlreadyProcessed(id){

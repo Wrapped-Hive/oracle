@@ -54,5 +54,6 @@ function main() {
   app.use('/ping', require('./api/ping.js'));
   app.use('/status', require('./api/status.js'));
   app.use('/balances', require('./api/get_whive_balances.js'));
+  app.use('/coingecko', require('./api/coingecko.js'))
   app.listen(8080)
 }

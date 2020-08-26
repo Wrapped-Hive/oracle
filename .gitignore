@@ -3,3 +3,4 @@ config/config.js
 other/
 tests/
 config/config.1.js
+src/logs/logs.log

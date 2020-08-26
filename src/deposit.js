@@ -211,7 +211,7 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
     const op = ["transfer", tx];
     client.broadcast
       .sendOperations([op], key)
-      .then(res => console.log(`Fee of ${amount_1} + ${fixed_fee} HIVE sent to ${config.fee_account} for ${hash}`))
+      .then(res => console.log(`Fee of ${amount_1} + ${fee} HIVE sent to ${config.fee_account} for ${hash}`))
       .catch((err) => {
         logger.debug.error(err)
         logToDatabase(err, `Error while sending ${amount} HIVE fee`)

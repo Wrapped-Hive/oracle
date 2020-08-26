@@ -1,6 +1,7 @@
 var deposit_account;
 var min_amount;
 var max_amount;
+var fee;
 
 function getConfig(){
   $.ajax({
@@ -11,6 +12,7 @@ function getConfig(){
       deposit_account = data.deposit
       min_amount = data.minAmount
       max_amount = data.maxAmount
+      fee = data.fee
     },
     error : function(request,error){
         alert("Failed to get data from server :(");
@@ -35,17 +37,19 @@ async function isEthereumAddressCorrect(){
 function processHiveDeposit(address){
   Swal.fire({
     text: 'How much HIVE would you like to deposit?',
-    input: 'text'
-  }).then(function(result) {
+    input: 'text',
+  }).then(async function(result) {
     if (!isNaN(result.value)) {
       const amount = parseFloat(result.value).toFixed(3)
       if (amount > max_amount || amount < min_amount) alert("Max amount is "+max_amount+" and min amount is "+min_amount)
       else {
-        if(window.hive_keychain) {
-          requestKeychain(amount, address)
-        } else {
-          requestHiveSigner(amount, address)
-        }
+        Swal.fire({text: 'You will receive a minimum of '+(Number(amount) - Number(fee))+' WHIVE (part of the "fee reservation"  will be refunded)!', showCancelButton: true,}).then(() => {
+          if(window.hive_keychain) {
+            requestKeychain(amount, address)
+          } else {
+            requestHiveSigner(amount, address)
+          }
+        })
       }
     } else alert("use numbers")
   })

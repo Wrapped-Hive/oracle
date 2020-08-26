@@ -43,11 +43,13 @@ function processHiveDeposit(address){
       const amount = parseFloat(result.value).toFixed(3)
       if (amount > max_amount || amount < min_amount) alert("Max amount is "+max_amount+" and min amount is "+min_amount)
       else {
-        Swal.fire({text: 'You will receive a minimum of '+(Number(amount) - Number(fee))+' WHIVE (part of the "fee reservation"  will be refunded)!', showCancelButton: true,}).then(() => {
-          if(window.hive_keychain) {
-            requestKeychain(amount, address)
-          } else {
-            requestHiveSigner(amount, address)
+        Swal.fire({text: 'You will receive a minimum of '+(Number(amount) - Number(fee))+' WHIVE (part of the "fee reservation"  will be refunded)!', showCancelButton: true,}).then((isConfirmed) => {
+          if (isConfirmed){
+            if(window.hive_keychain) {
+              requestKeychain(amount, address)
+            } else {
+              requestHiveSigner(amount, address)
+            }
           }
         })
       }

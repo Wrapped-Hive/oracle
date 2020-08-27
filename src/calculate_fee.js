@@ -13,7 +13,7 @@ async function calculate(){
     })
     .then((result) => {
       let hive_fee = result.fee / result.price
-      saveToDataBase(hive_fee)
+      saveToDatabase(hive_fee)
     })
     .catch((err) => {
       logger.debug.error(err)
@@ -48,7 +48,7 @@ function getHiveInEth(eth_fee){
   })
 }
 
-function saveToDataBase(hive_fee){
+function saveToDatabase(hive_fee){
   database.updateOne({type: 'fee'}, {$set: {fee: parseFloat(hive_fee).toFixed(3)}}, {upsert: true}, (err, result) => {
     if (err) logger.debug.error(err)
   })

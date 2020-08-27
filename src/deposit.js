@@ -2,14 +2,14 @@ const dhive = require("@hiveio/dhive")
 const Web3 = require("web3")
 const Tx = require('ethereumjs-tx').Transaction;
 const axios = require('axios');
-var logger = require('./logs/logger.js');
+const logger = require('./logs/logger.js');
 const NodeCache = require( "node-cache" );
 
-var abiArray = require("./abi.js")
+const abiArray = require("./abi.js")
 const config = require("../config/config.js")
 
-var client = new dhive.Client(config.hive_api_nodes);
-var web3 = new Web3(new Web3.providers.HttpProvider(config.ethEndpoint));
+const client = new dhive.Client(config.hive_api_nodes);
+const web3 = new Web3(new Web3.providers.HttpProvider(config.ethEndpoint));
 
 const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 
@@ -136,12 +136,12 @@ async function sendTokens(address, amount, from, full_amount){
     console.log(`Sending ${amount} WHIVE to ${address}, paid by ${from}`)
     var fee = await getFee()
     var transferAmount_not_rounded = amount * 1000;
-    var transferAmount = parseFloat(transferAmount_not_rounded - (fee * 1000) - ((transferAmount_not_rounded * config.fee_deposit) / 100)).toFixed(0)
+    var transferAmount = parseFloat(transferAmount_not_rounded - (Number(fee)* 1000) - ((transferAmount_not_rounded * config.fee_deposit) / 100)).toFixed(0)
     var contract = new web3.eth.Contract(abiArray.abi, config.contractAddress, {
       from: config.ethereumAddress
     });
-    const contractFunction = contract.methods.mint(address, transferAmount);
-    const functionAbi = contractFunction.encodeABI();
+    var contractFunction = contract.methods.mint(address, transferAmount);
+    var functionAbi = contractFunction.encodeABI();
     var gasPriceGwei = await getRecomendedGasPrice();
     var nonce = await getNonce() //web3.eth.getTransactionCount(config.ethereumAddress)
     var rawTransaction = {
@@ -157,10 +157,10 @@ async function sendTokens(address, amount, from, full_amount){
     tx.sign(new Buffer.from(config.privateKey, 'hex'));
     var serializedTx = tx.serialize();
     var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
-    var hash_share = receipt.transactionHash
-    let gas_spent = receipt.gasUsed
-    sendConfirmationMemo(hash_share, from)
-    sendFeeAmount(amount, hash_share, fee, gas_spent, gasPriceGwei, from)
+    var hash = receipt.transactionHash
+    var gas_spent = receipt.gasUsed
+    sendConfirmationMemo(hash, from)
+    sendFeeAmount(amount, hash, fee, gas_spent, gasPriceGwei, from)
   } catch (e) {
     console.log(e)
     logger.debug.error(e)
@@ -196,11 +196,13 @@ function getFee(){
 async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent, gasPriceGwei, to){
   try {
     let hive_in_eth = await getHiveEthPrice()
+    console.log("ETH/HIVE price: "+hive_in_eth)
     let fee = ((gas_spent * gasPriceGwei) / 1000000000) / hive_in_eth //how much  did we actually burned?
-    let amount_1 = (transferAmount_not_fee * config.fee_deposit) / 100 // % fee
-    let unspent_fee = Number(fixed_fee) - Number(fee) - Number(amount_1) //remove spent & percentage from reserved fee
-    let amount_2 = Number(amount_1) + Number(fee)
-    let amount = parseFloat(amount_2).toFixed(3)
+    let percentage_fee = (transferAmount_not_fee * config.fee_deposit) / 100 // % fee
+    let unspent_fee = Number(fixed_fee) - (Number(fee) + Number(percentage_fee)) //remove spent & percentage fee from reserved fee
+    let total_fee = Number(percentage_fee) + Number(fee)
+    let amount = parseFloat(total_fee).toFixed(3)
+    console.log(amount, unspent_fee, fee)
     const tx = {
       from: config.hiveAccount,
       to: config.fee_account,
@@ -216,14 +218,14 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
         logger.debug.error(err)
         logToDatabase(err, `Error while sending ${amount} HIVE fee`)
       });
-    refundfeeToUser(unspent_fee, to)
+    refundFeeToUser(unspent_fee, to)
   } catch (err) {
     logger.debug.error(err)
     logToDatabase(err, `Error cought sending fee`)
   }
 }
 
-function refundfeeToUser(unspent, to){
+function refundFeeToUser(unspent, to){
   const tx = {
     from: config.hiveAccount,
     to: to,

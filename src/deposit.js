@@ -202,7 +202,6 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
     let unspent_fee = Number(fixed_fee) - (Number(fee) + Number(percentage_fee)) //remove spent & percentage fee from reserved fee
     let total_fee = Number(percentage_fee) + Number(fee)
     let amount = parseFloat(total_fee).toFixed(3)
-    console.log(amount, unspent_fee, fee)
     const tx = {
       from: config.hiveAccount,
       to: config.fee_account,
@@ -213,7 +212,7 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
     const op = ["transfer", tx];
     client.broadcast
       .sendOperations([op], key)
-      .then(res => console.log(`Fee of ${percentage_fee} + ${fee} HIVE sent to ${config.fee_account} for ${hash}`))
+      .then(res => console.log(`Fee of ${percentage_fee} (${config.fee_deposit}%) + ${fee} HIVE sent to ${config.fee_account} for ${hash}`))
       .catch((err) => {
         logger.debug.error(err)
         logToDatabase(err, `Error while sending ${amount} HIVE fee`)

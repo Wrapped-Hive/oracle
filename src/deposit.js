@@ -150,7 +150,7 @@ function sendRefund(to, amount, message){
 
 async function sendTokens(address, amount, from, full_amount){
   try {
-    console.log(`Sending ${amount} WHIVE to ${address}, paid by ${from}`)
+    console.log(`Sending ${amount} WLEO to ${address}, paid by ${from}`)
     var fee = await getFee()
     var transferAmount_not_rounded = amount * 1000;
     var transferAmount = parseFloat(transferAmount_not_rounded - (Number(fee)* 1000) - ((transferAmount_not_rounded * config.fee_deposit) / 100)).toFixed(0)
@@ -242,16 +242,27 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
 }
 
 function refundFeeToUser(unspent, to){
-  const tx = {
-    from: config.hiveAccount,
-    to: to,
-    amount: parseFloat(unspent).toFixed(3) + ' HIVE',
-    memo: `Refund of ${parseFloat(unspent).toFixed(3)} HIVE (unspent transaction fees)!`
-  }
+  const tx = JSON.stringify([
+      {
+        contractName: 'tokens',
+        contractAction: 'transfer',
+        contractPayload: {
+          symbol: "LEO",
+          to: to,
+          quantity: unspent,
+          memo: `Refund of ${parseFloat(unspent).toFixed(3)} LEO (unspent transaction fees)!`
+        }
+      }
+  ]);
+  const op = {
+    id: 'ssc-mainnet-hive',
+    json: tx,
+    required_auths: [],
+    required_posting_auths: [config.hiveAccount],
+  };
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
-  const op = ["transfer", tx];
   client.broadcast
-    .sendOperations([op], key)
+    .json(op, key)
     .then(res => console.log(`Fee refund of ${unspent} HIVE sent to ${to}.`))
     .catch((err) => {
       logger.debug.error(err)
@@ -296,18 +307,32 @@ function getRecomendedGasPrice(){
 
 function sendConfirmationMemo(hash, hive_user){
   console.log("Transaction sent! "+hash)
-  const tx = {
-    from: config.hiveAccount,
-    to: hive_user,
-    amount: '0.001 HIVE',
-    memo: `Tokens sent! Hash: ${hash}!`
-  }
+  const tx = JSON.stringify([
+      {
+        contractName: 'tokens',
+        contractAction: 'transfer',
+        contractPayload: {
+          symbol: "LEO",
+          to: hive_user,
+          quantity: '0.001',
+          memo: `Tokens sent! Hash: ${hash}!`
+        }
+      }
+  ]);
+  const op = {
+    id: 'ssc-mainnet-hive',
+    json: tx,
+    required_auths: [],
+    required_posting_auths: [config.hiveAccount],
+  };
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
-  const op = ["transfer", tx];
   client.broadcast
-    .sendOperations([op], key)
-    .then(res => console.log(`Confirmation sent to ${hive_user} for ${hash}`))
-    .catch(err => logger.debug.error(err));
+    .json(op, key)
+    .then(res => console.log(`Confirmation sent to ${hive_user}for: ${hash}`))
+    .catch((err) => {
+      logger.debug.error(err)
+      logToDatabase(err, `Error while sending confirmation for ${hash} to ${hive_user}`)
+    });
 }
 
 function logToDatabase(err, message){

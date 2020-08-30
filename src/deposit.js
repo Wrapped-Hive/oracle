@@ -28,7 +28,7 @@ function start(){
           for (const op of transaction.operations){
             let type = op[0]
             let data = op[1]
-            if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount, transaction.transaction_id)
+            if (type == 'custom_json') console.log(data)//processCustomJson(data, transaction)
           }
         }
       })
@@ -49,6 +49,17 @@ function start(){
   }
 }
 
+function processCustomJson(data, transaction){
+  if (data.id == 'ssc-mainnet-hive'){
+    let json  = data.json
+    if (json.contractName == 'tokens' && json.contractAction == 'transfer' && json.contractPayload.symbol == 'LEO' && json.contractPayload.to == config.hiveAccount){
+      let from = data.required_posting_auths[0]
+      let memo = json.contractPayload.memo
+      let amount = json.contractPayload.quantity
+      processDeposit(from, memo, amount, transaction.transaction_id)
+    }
+  }
+}
 
 async function processDeposit(sender, memo, amount, id){
   if (!alreadyProcessed.includes(id)){
@@ -61,10 +72,9 @@ async function processDeposit(sender, memo, amount, id){
           let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
           if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
           else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
-          else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
-          else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' HIVE!');
-          else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!');
-          else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' HIVE!');
+          else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' LEO!');
+          else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' LEO!');
+          else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' LEO!');
         } else {
           console.log("Hive transaction already processed!")
         }
@@ -102,11 +112,7 @@ function insertTransaction(id){
 }
 
 async function isTransferInCorrectFormat(memo, amount, fee){
-  const value = Number(amount.split(" ")[0])
-  const symbol = amount.split(" ")[1]
-
   if (web3.utils.isAddress(memo) != true) return 'not_eth_address';
-  else if (symbol != "HIVE") return 'not_hive';
   else if (value < config.min_amount) return "under_min_amount"
   else if (config.max_amount > 0 && value > config.max_amount) return "over_max_amount"
   else if (value <= fee * (1 + (config.fee_deposit / 100))) return "fee_higher_than_deposit"
@@ -114,20 +120,31 @@ async function isTransferInCorrectFormat(memo, amount, fee){
 }
 
 function sendRefund(to, amount, message){
-  const tx = {
-    from: config.hiveAccount,
-    to: to,
-    amount: amount,
-    memo: `Refund! Reason: ${message}`
-  }
+  const tx = JSON.stringify([
+      {
+        contractName: 'tokens',
+        contractAction: 'transfer',
+        contractPayload: {
+          symbol: "LEO",
+          to: to,
+          quantity: amount,
+          memo: `Refund! Reason: ${message}`
+        }
+      }
+  ]);
+  const op = {
+    id: 'ssc-mainnet-hive',
+    json: tx,
+    required_auths: [],
+    required_posting_auths: [config.hiveAccount],
+  };
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
-  const op = ["transfer", tx];
   client.broadcast
-    .sendOperations([op], key)
-    .then(res => console.log(`Refund of ${amount} sent to ${to}! Reason: ${message}`))
+    .json(op, key)
+    .then(res => console.log(`Refund of ${amount} LEO sent to ${to}! Reason: ${message}`))
     .catch((err) => {
       logger.debug.error(err)
-      logToDatabase(err, `Error while sending ${amount} refund for ${to}`)
+      logToDatabase(err, `Error while sending ${amount} LEO refund for ${to}`)
     });
 }
 

@@ -263,10 +263,10 @@ function refundFeeToUser(unspent, to){
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast
     .json(op, key)
-    .then(res => console.log(`Fee refund of ${unspent} HIVE sent to ${to}.`))
+    .then(res => console.log(`Fee refund of ${unspent} LEO sent to ${to}.`))
     .catch((err) => {
       logger.debug.error(err)
-      logToDatabase(err, `Error while refunding ${unspent} HIVE fee`)
+      logToDatabase(err, `Error while refunding ${unspent} LEO fee`)
     });
 }
 

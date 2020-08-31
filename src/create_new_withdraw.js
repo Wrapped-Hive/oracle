@@ -15,15 +15,16 @@ const config = require("../config/config.js")
 var client = new Client(config.hive_api_nodes)
 var logger = require('./logs/logger.js');
 
+
 router.post("/", async (req, res) => {
   if(!req.body.username) res.status(200).json({success: false, message: "missing_username"})
   else {
     let isUsernameValid = await isHiveUsernameValid(req.body.username.toLowerCase())
     if (isUsernameValid == true){
-      findAddressWithUsername(req.body.username.toLowerCase())
+      findAddressWithUsername(req.body.username.toLowerCase()) //check if any unexpired address for this user exists
         .then((result) => {
           if (result == false){
-            createNewTransaction(req.body.username.toLowerCase())
+            createNewTransaction(req.body.username.toLowerCase()) //check if we need new address or reuse old
               .then((result) => {
                 if (result == null) return createNewAddress(req.body.username.toLowerCase())
                 else return reuseOldAddress(req.body.username.toLowerCase(), result)
@@ -85,7 +86,7 @@ async function createNewAddress(username, data){
       database.countDocuments(async (err, result) =>  {
         if (err) reject(err)
         else {
-          var path = `m/44'/60'/0'/0/${result}`; //bip39 address index starts with 0, count with 1
+          var path = `m/44'/60'/0'/0/${result}`; //bip39 address index starts with 0, count with 0
           const addrNode = await root.derive(path)
           const pubKey = await ethUtil.privateToPublic(addrNode._privateKey)
           const addr = '0x' + await ethUtil.publicToAddress(pubKey).toString('hex');

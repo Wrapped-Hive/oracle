@@ -42,14 +42,17 @@ function main() {
   const transfers = require("./token_transfers.js");
   const calculate_fee = require("./calculate_fee.js");
 
-  deposit.start()
-  track.start((result) => {
+  deposit.start() //start scanning HIVE for deposits
+  
+  track.start((result) => { //start checking token transactions
     transfers.processTokenTransfer(result)
   })
+
   calculate_fee.calculate()
   setInterval(() => {
     calculate_fee.calculate()
   }, 1000 * 60 * 60)
+
   app.use('/create', require('./create_new_withdraw.js'));
   app.use('/get_addresses', require('./api/get_addresses.js'));
   app.use('/ping', require('./api/ping.js'));

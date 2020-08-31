@@ -8,6 +8,7 @@ var client = new dhive.Client(config.hive_api_nodes)
 
 var logger = require('./logs/logger.js');
 
+//check if address is our deposit address
 async function processTokenTransfer(data){
   database.collection("addresses").findOne({ $text: { $search: data.to, $caseSensitive: false } }, (err, result) => {
     if (err) logger.debug.error(err);

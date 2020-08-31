@@ -51,7 +51,7 @@ function start(){
 
 
 async function processDeposit(sender, memo, amount, id){
-  if (!alreadyProcessed.includes(id)){
+  if (!alreadyProcessed.includes(id)){ //make sure tx was not processed yet (db can be too slow sometimes, use array instead)
     insertTransaction(id)
     isAlreadyProcessed(id)
       .then(async (result) => {
@@ -91,6 +91,7 @@ function isAlreadyProcessed(id){
   })
 }
 
+//add tx id to database
 function insertTransaction(id){
   let db_tx  = mongo.get().db("ETH-HIVE").collection("hive_transactions")
   db_tx.insertOne({tx: id}, (err, result) => {
@@ -184,6 +185,7 @@ async function getNonce(){ //use database, since web3.eth.getTransactionCount(co
   })
 }
 
+//fee is calculated in calculate_fee.js
 function getFee(){
   return new Promise((resolve, reject) => {
     database.findOne({type: "fee"}, (err, result) => {

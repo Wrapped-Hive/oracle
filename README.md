@@ -86,9 +86,16 @@ Collection: `status`
   _id: someid,
   type: "nonce",
   nonce: 0
+},
+{
+  _id: someid,
+  type: "fee",
+  nonce: "51.000"
 }
 ```
 
 Collection: `transactions`
 
 Collection: `errors`
+
+Collection: `hive_transaction`

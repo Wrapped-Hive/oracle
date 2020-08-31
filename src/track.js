@@ -7,6 +7,7 @@ const API_KEY = config.ethplorer_api;
 const TRANSFERS_LIMIT = 25;
 const TOKEN_API_URL = config.token_api_url;
 
+//use ethplorer API to get token transaction history
 async function start(callback) {
   setInterval(() => {
     console.log("Processing transactions at: "+new Date().toString().split('(')[0])

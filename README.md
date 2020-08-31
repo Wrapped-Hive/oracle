@@ -13,6 +13,8 @@ To process the withdraw from WHIVE to HIVE, app generates deposit address for ea
 
 This allows for address reuse and reduce number of addresses to monitor (and later burn deposited WHIVE) to save on ETH fees. To process the WHIVE transfers, app use https://ethplorer.io API.
 
+For v2.0 contract should use custom function that would allow users to directly burn tokens: https://hive.blog/hive/@superoo7/qflf5q
+
 ---
 
 API:

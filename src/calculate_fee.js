@@ -38,9 +38,9 @@ function getRecomendedGasPrice(){
 function getHiveInEth(eth_fee){
   return new Promise((resolve, reject) => {
     axios
-      .get('https://api.coingecko.com/api/v3/coins/hive')
+      .get('https://swap-app.app/api/ratio')
       .then((result) => {
-        resolve({price: result.data.market_data.current_price.eth, fee: eth_fee})
+        resolve({price: parseFloat(result.data[23].value) * parseFloat(result.data[3].value), fee: eth_fee})
       })
       .catch((err) => {
         reject(err)

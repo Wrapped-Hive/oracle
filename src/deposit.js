@@ -28,7 +28,7 @@ function start(){
           for (const op of transaction.operations){
             let type = op[0]
             let data = op[1]
-            if (type == 'custom_json') console.log(data)//processCustomJson(data, transaction)
+            if (type == 'custom_json') processCustomJson(data, transaction)
           }
         }
       })
@@ -51,7 +51,7 @@ function start(){
 
 function processCustomJson(data, transaction){
   if (data.id == 'ssc-mainnet-hive'){
-    let json  = data.json
+    let json  = JSON.parse(data.json)
     if (json.contractName == 'tokens' && json.contractAction == 'transfer' && json.contractPayload.symbol == 'LEO' && json.contractPayload.to == config.hiveAccount){
       let from = data.required_posting_auths[0]
       let memo = json.contractPayload.memo
@@ -62,6 +62,8 @@ function processCustomJson(data, transaction){
 }
 
 async function processDeposit(sender, memo, amount, id){
+  console.log(id)
+  console.log(alreadyProcessed)
   if (!alreadyProcessed.includes(id)){
     insertTransaction(id)
     isAlreadyProcessed(id)
@@ -76,15 +78,15 @@ async function processDeposit(sender, memo, amount, id){
           else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' LEO!');
           else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' LEO!');
         } else {
-          console.log("Hive transaction already processed!")
+          console.log("Hive transaction already processed (db)!")
         }
       })
       .catch((err) => {
         logger.debug.error(err)
-        logToDatabase(err, `Error while chekcking transaction ${id}`)
+        logToDatabase(err, `Error while checking transaction ${id}`)
       })
   } else {
-    console.log("Hive transaction already processed!")
+    console.log("Hive transaction already processed (array)!")
   }
 }
 
@@ -213,7 +215,7 @@ function getFee(){
 async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent, gasPriceGwei, to){
   try {
     let hive_in_eth = await getHiveEthPrice()
-    console.log("ETH/HIVE price: "+hive_in_eth)
+    console.log("ETH/LEO price: "+hive_in_eth)
     let fee = ((gas_spent * gasPriceGwei) / 1000000000) / hive_in_eth //how much  did we actually burned?
     let percentage_fee = (transferAmount_not_fee * config.fee_deposit) / 100 // % fee
     let unspent_fee = Number(fixed_fee) - (Number(fee) + Number(percentage_fee)) //remove spent & percentage fee from reserved fee
@@ -275,11 +277,11 @@ function getHiveEthPrice(){
     value = myCache.get( "rate" );
     if (value == undefined){
       axios
-        .get('https://api.coingecko.com/api/v3/coins/hive')
+        .get('https://swap-app.app/api/ratio')
         .then((result) => {
-          obj = { my: "exchange_rate", rate: result.data.market_data.current_price.eth };
+          obj = { my: "exchange_rate", rate: parseFloat(result.data[23].value) * parseFloat(result.data[3].value) };
           success = myCache.set( "rate", obj, 3600 );
-          resolve(result.data.market_data.current_price.eth)
+          resolve(parseFloat(result.data[23].value) * parseFloat(result.data[3].value))
         })
         .catch((err) => {
           reject(err)

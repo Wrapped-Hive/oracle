@@ -51,20 +51,31 @@ function insertTx(data){
 }
 
 function sendHive(to, value, hash){
-  const tx = {
-    from: config.hiveAccount,
-    to: to,
-    amount: parseFloat(value).toFixed(3) + ' HIVE',
-    memo: `${parseFloat(value).toFixed(3)} WHIVE converted! Tx hash: ${hash}`
-  }
+  const tx = JSON.stringify([
+      {
+        contractName: 'tokens',
+        contractAction: 'transfer',
+        contractPayload: {
+          symbol: "LEO",
+          to: to,
+          quantity: amount,
+          memo: `${parseFloat(value).toFixed(3)} WLEO converted! Tx hash: ${hash}`
+        }
+      }
+  ]);
+  const op = {
+    id: 'ssc-mainnet-hive',
+    json: tx,
+    required_auths: [],
+    required_posting_auths: [config.hiveAccount],
+  };
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
-  const op = ["transfer", tx];
   client.broadcast
-    .sendOperations([op], key)
-    .then(res => console.log(res))
+    .json(op, key)
+    .then(res => console.log(`Refund of ${amount} LEO sent to ${to}! Reason: ${message}`))
     .catch((err) => {
       logger.debug.error(err)
-      logToDatabase(err, `Failed to send ${parseFloat(value).toFixed(3)} HIVE to ${to} for tranasction: ${hash}`)
+      logToDatabase(err, `Failed to send ${parseFloat(value).toFixed(3)} LEO to ${to} for tranasction: ${hash}`)
     });
 }
 

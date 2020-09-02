@@ -53,7 +53,7 @@ function processCustomJson(data, transaction){
   if (data.id == 'ssc-mainnet-hive'){
     let json  = JSON.parse(data.json)
     if (json.contractName == 'tokens' && json.contractAction == 'transfer' && json.contractPayload.symbol == 'LEO' && json.contractPayload.to == config.hiveAccount){
-      let from = data.required_posting_auths[0]
+      let from = data.required_auths[0]
       let memo = json.contractPayload.memo
       let amount = json.contractPayload.quantity
       processDeposit(from, memo, amount, transaction.transaction_id)
@@ -62,14 +62,12 @@ function processCustomJson(data, transaction){
 }
 
 async function processDeposit(sender, memo, amount, id){
-  console.log(id)
-  console.log(alreadyProcessed)
   if (!alreadyProcessed.includes(id)){
-    insertTransaction(id)
+    alreadyProcessed.push(id)
     isAlreadyProcessed(id)
       .then(async (result) => {
         if (result == false){
-          alreadyProcessed.push(id)
+          insertTransaction(id)
           var fee = await getFee()
           let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
           if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
@@ -137,8 +135,8 @@ function sendRefund(to, amount, message){
   const op = {
     id: 'ssc-mainnet-hive',
     json: tx,
-    required_auths: [],
-    required_posting_auths: [config.hiveAccount],
+    required_auths: [config.hiveAccount],
+    required_posting_auths: [],
   };
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast

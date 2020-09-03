@@ -9,7 +9,7 @@ async function calculate(){
   getRecomendedGasPrice()
     .then((result) => {
       let eth_fee = (result * 150000) / 1000000000 //gas price * gas limit / 1000000000 = ETH
-      return getHiveInEth(eth_fee)
+      return getLeoInEth(eth_fee)
     })
     .then((result) => {
       let hive_fee = result.fee / result.price
@@ -35,12 +35,12 @@ function getRecomendedGasPrice(){
   })
 }
 
-function getHiveInEth(eth_fee){
+function getLeoInEth(eth_fee){
   return new Promise((resolve, reject) => {
     axios
-      .get('https://swap-app.app/api/ratio')
+      .get('http://localhost:8080/price')
       .then((result) => {
-        resolve({price: parseFloat(result.data[23].value) * parseFloat(result.data[3].value), fee: eth_fee})
+        resolve({price: result.data.current_eth_price, fee: eth_fee})
       })
       .catch((err) => {
         reject(err)
@@ -49,7 +49,7 @@ function getHiveInEth(eth_fee){
 }
 
 function saveToDatabase(hive_fee){
-  database.updateOne({type: 'fee'}, {$set: {fee: parseFloat(hive_fee).toFixed(3)}}, {upsert: true}, (err, result) => {
+  database.updateOne({type: 'leo_fee'}, {$set: {fee: parseFloat(hive_fee).toFixed(3)}}, {upsert: true}, (err, result) => {
     if (err) logger.debug.error(err)
   })
 }

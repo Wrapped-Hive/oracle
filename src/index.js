@@ -56,5 +56,6 @@ function main() {
   app.use('/status', require('./api/status.js'));
   app.use('/balances', require('./api/get_whive_balances.js'));
   app.use('/coingecko', require('./api/coingecko.js'))
+  app.use('/price', require('./api/price_api.js'))
   app.listen(8080)
 }

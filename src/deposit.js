@@ -113,9 +113,9 @@ function insertTransaction(id){
 
 async function isTransferInCorrectFormat(memo, amount, fee){
   if (web3.utils.isAddress(memo) != true) return 'not_eth_address';
-  else if (value < config.min_amount) return "under_min_amount"
-  else if (config.max_amount > 0 && value > config.max_amount) return "over_max_amount"
-  else if (value <= fee * (1 + (config.fee_deposit / 100))) return "fee_higher_than_deposit"
+  else if (amount < config.min_amount) return "under_min_amount"
+  else if (config.max_amount > 0 && amount > config.max_amount) return "over_max_amount"
+  else if (amount <= fee * (1 + (config.fee_deposit / 100))) return "fee_higher_than_deposit"
   else return true;
 }
 
@@ -275,11 +275,11 @@ function getHiveEthPrice(){
     value = myCache.get( "rate" );
     if (value == undefined){
       axios
-        .get('https://swap-app.app/api/ratio')
+        .get('http://localhost:8080/price')
         .then((result) => {
-          obj = { my: "exchange_rate", rate: parseFloat(result.data[23].value) * parseFloat(result.data[3].value) };
+          obj = { my: "exchange_rate", rate: result.data.current_eth_price };
           success = myCache.set( "rate", obj, 3600 );
-          resolve(parseFloat(result.data[23].value) * parseFloat(result.data[3].value))
+          resolve(result.data.current_eth_price)
         })
         .catch((err) => {
           reject(err)

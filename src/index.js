@@ -46,7 +46,7 @@ function main() {
   track.start((result) => {
     transfers.processTokenTransfer(result)
   })
-  calculate_fee.calculate()
+  //calculate_fee.calculate()
   setInterval(() => {
     calculate_fee.calculate()
   }, 1000 * 60 * 60)

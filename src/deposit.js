@@ -203,7 +203,7 @@ async function getNonce(){ //use database, since web3.eth.getTransactionCount(co
 
 function getFee(){
   return new Promise((resolve, reject) => {
-    database.findOne({type: "fee"}, (err, result) => {
+    database.findOne({type: "leo_fee"}, (err, result) => {
       if (err) reject(err)
       else resolve(result.fee)
       })

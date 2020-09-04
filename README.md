@@ -84,8 +84,13 @@ Collection: `status`
 ```
 {
   _id: someid,
-  type: "nonce",
+  type: "leo_nonce",
   nonce: 0
+},
+{
+  _id: someid,
+  type: "leo_fee",
+  fee: "51.000"
 }
 ```
 

@@ -188,10 +188,10 @@ async function sendTokens(address, amount, from, full_amount){
 
 async function getNonce(){ //use database, since web3.eth.getTransactionCount(config.ethereumAddress) does not return pending tx's
   return new Promise((resolve, reject) => {
-    database.findOne({type: "nonce"}, (err, result) => {
+    database.findOne({type: "leo_nonce"}, (err, result) => {
       if (err) reject(err)
       else {
-        database.updateOne({type: "nonce"}, {$set: {nonce: Number(result.nonce) + 1}}, (err1, result1) => {
+        database.updateOne({type: "leo_nonce"}, {$set: {nonce: Number(result.nonce) + 1}}, (err1, result1) => {
           if (err1) reject(err1)
           else if (result1 != null) resolve(result.nonce)
           else reject("nonce not found")
@@ -219,20 +219,32 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
     let unspent_fee = Number(fixed_fee) - (Number(fee) + Number(percentage_fee)) //remove spent & percentage fee from reserved fee
     let total_fee = Number(percentage_fee) + Number(fee)
     let amount = parseFloat(total_fee).toFixed(3)
-    const tx = {
-      from: config.hiveAccount,
-      to: config.fee_account,
-      amount: amount + ' HIVE',
-      memo: `${config.fee_deposit}% + ${parseFloat(fee).toFixed(3)} fee  for transaction: ${hash}!`
-    }
+
+    const tx = JSON.stringify([
+        {
+          contractName: 'tokens',
+          contractAction: 'transfer',
+          contractPayload: {
+            symbol: "LEO",
+            to: config.fee_account,
+            quantity: amount,
+            memo: `${config.fee_deposit}% + ${parseFloat(fee).toFixed(3)} fee  for transaction: ${hash}!`
+          }
+        }
+    ]);
+    const op = {
+      id: 'ssc-mainnet-hive',
+      json: tx,
+      required_auths: [],
+      required_posting_auths: [config.hiveAccount],
+    };
     const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
-    const op = ["transfer", tx];
     client.broadcast
       .sendOperations([op], key)
-      .then(res => console.log(`Fee of ${percentage_fee} (${config.fee_deposit}%) + ${fee} HIVE sent to ${config.fee_account} for ${hash}`))
+      .then(res => console.log(`Fee of ${percentage_fee} (${config.fee_deposit}%) + ${fee} LEO sent to ${config.fee_account} for ${hash}`))
       .catch((err) => {
         logger.debug.error(err)
-        logToDatabase(err, `Error while sending ${amount} HIVE fee`)
+        logToDatabase(err, `Error while sending ${amount} LEO fee`)
       });
     refundFeeToUser(unspent_fee, to)
   } catch (err) {

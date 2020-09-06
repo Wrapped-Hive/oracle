@@ -4,12 +4,14 @@ const Tx = require('ethereumjs-tx').Transaction;
 const axios = require('axios');
 const logger = require('./logs/logger.js');
 const NodeCache = require( "node-cache" );
+const { Hive } = require('@splinterlands/hive-interface');
 
 const abiArray = require("./abi.js")
 const config = require("../config/config.js")
 
 const client = new dhive.Client(config.hive_api_nodes);
 const web3 = new Web3(new Web3.providers.HttpProvider(config.ethEndpoint));
+const hive = new Hive({rpc_error_limit: 5});
 
 const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 
@@ -20,33 +22,23 @@ var alreadyProcessed = []
 
 function start(){
   try {
-    stream = client.blockchain.getBlockStream({mode: dhive.BlockchainMode.Latest});
-    console.log("Start streaming HIVE!")
-    stream
-      .on('data', function(block) {
-        for (const transaction of block.transactions) {
-          for (const op of transaction.operations){
-            let type = op[0]
-            let data = op[1]
-            if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount, transaction.transaction_id)
-          }
-        }
-      })
-      .on('error', function() {
-        setTimeout(() => {
-          start()
-        }, 3000)
-      })
-      .on('end', function() {
-        setTimeout(() => {
-          start()
-        }, 3000)
-      });
-  } catch (e) {
-    setTimeout(() => {
-      start()
-    }, 3000)
-  }
+   hive.stream({
+     on_block: onBlock
+   });
+   function onBlock(block_num, block){
+     for (const transaction of block.transactions) {
+       for (const op of transaction.operations){
+         let type = op[0]
+         let data = op[1]
+         if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount, transaction.transaction_id)
+       }
+     }
+   }
+ } catch (e) {
+   setTimeout(() => {
+     start()
+   }, 3000)
+ }
 }
 
 

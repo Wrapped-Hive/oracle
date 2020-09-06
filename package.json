@@ -4,7 +4,7 @@
   "description": "ETH wrapped HIVE tokens",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js --ignore state.json"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/fbslo/eth-hive#readme",
   "dependencies": {
     "@hiveio/dhive": "^0.14.1",
+    "@splinterlands/hive-interface": "^2.1.3",
     "axios": "^0.19.2",
     "bip39": "^3.0.2",
     "body-parser": "^1.19.0",

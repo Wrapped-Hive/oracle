@@ -66,13 +66,13 @@ function sendHive(to, value, hash){
   const op = {
     id: 'ssc-mainnet-hive',
     json: tx,
-    required_auths: [],
-    required_posting_auths: [config.hiveAccount],
+    required_auths: [config.hiveAccount],
+    required_posting_auths: [],
   };
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast
     .json(op, key)
-    .then(res => console.log(`Refund of ${amount} LEO sent to ${to}! Reason: ${message}`))
+    .then(res => console.log(`Converted ${amount} LEO sent to ${to}!`))
     .catch((err) => {
       logger.debug.error(err)
       logToDatabase(err, `Failed to send ${parseFloat(value).toFixed(3)} LEO to ${to} for tranasction: ${hash}`)

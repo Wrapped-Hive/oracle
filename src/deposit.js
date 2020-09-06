@@ -44,11 +44,11 @@ function start(){
 
 async function processDeposit(sender, memo, amount, id){
   if (!alreadyProcessed.includes(id)){ //make sure tx was not processed yet (db can be too slow sometimes, use array instead)
-    insertTransaction(id)
+    alreadyProcessed.push(id)
     isAlreadyProcessed(id)
       .then(async (result) => {
         if (result == false){
-          alreadyProcessed.push(id)
+          insertTransaction(id)
           var fee = await getFee()
           let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
           if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
@@ -58,7 +58,7 @@ async function processDeposit(sender, memo, amount, id){
           else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' HIVE!');
           else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' HIVE!');
         } else {
-          console.log("Hive transaction already processed!")
+          console.log("Hive transaction already processed (db)!")
         }
       })
       .catch((err) => {
@@ -66,7 +66,7 @@ async function processDeposit(sender, memo, amount, id){
         logToDatabase(err, `Error while chekcking transaction ${id}`)
       })
   } else {
-    console.log("Hive transaction already processed!")
+    console.log("Hive transaction already processed (array)!")
   }
 }
 

@@ -58,7 +58,7 @@ function sendHive(to, value, hash){
         contractPayload: {
           symbol: "LEO",
           to: to,
-          quantity: amount,
+          quantity: value,
           memo: `${parseFloat(value).toFixed(3)} WLEO converted! Tx hash: ${hash}`
         }
       }
@@ -72,7 +72,7 @@ function sendHive(to, value, hash){
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast
     .json(op, key)
-    .then(res => console.log(`Converted ${amount} LEO sent to ${to}!`))
+    .then(res => console.log(`Converted ${value} LEO sent to ${to}!`))
     .catch((err) => {
       logger.debug.error(err)
       logToDatabase(err, `Failed to send ${parseFloat(value).toFixed(3)} LEO to ${to} for tranasction: ${hash}`)

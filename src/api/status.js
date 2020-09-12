@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 
 function getFee(){
   return new Promise((resolve, reject) => {
-    database.findOne({type: "fee"}, (err, result) => {
+    database.findOne({type: "leo_fee"}, (err, result) => {
       if (err) reject(err)
       else resolve(result.fee)
       })

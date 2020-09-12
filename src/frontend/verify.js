@@ -85,10 +85,20 @@ function getPrice(balance){
     type : 'GET',
     dataType:'json',
     success : function(data) {
-      let number = parseFloat(data.market_data.current_price.usd).toFixed(3) * balance + ''
-      let value = number.split('.')
-      let decimals = value[1].substring(0, 2)
-      document.getElementById("price").innerHTML =numberWithCommas(value[0]) + '<small>.'+decimals+'</small>'
+      $.ajax({
+        url : '/price',
+        type : 'GET',
+        dataType:'json',
+        success : function(data1) {
+          let number = parseFloat(data.market_data.current_price.usd * data1.current_hive_price).toFixed(3) * balance + ''
+          let value = number.split('.')
+          let decimals = value[1].substring(0, 2)
+          document.getElementById("price").innerHTML =numberWithCommas(value[0]) + '<small>.'+decimals+'</small>'
+        },
+        error : function(request,error){
+            alert("Failed to get data from server :(");
+        }
+      });
     },
     error : function(request,error){
         alert("Failed to get data from server :(");

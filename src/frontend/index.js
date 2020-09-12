@@ -36,14 +36,14 @@ async function isEthereumAddressCorrect(){
 
 function processHiveDeposit(address){
   Swal.fire({
-    text: 'How much HIVE would you like to deposit?',
+    text: 'How much LEO would you like to deposit?',
     input: 'text',
   }).then(async function(result) {
     if (!isNaN(result.value)) {
       const amount = parseFloat(result.value).toFixed(3)
       if (amount > max_amount || amount < min_amount) alert("Max amount is "+max_amount+" and min amount is "+min_amount)
       else {
-        Swal.fire({text: 'You will receive a minimum of '+(Number(amount) - Number(fee))+' WHIVE (part of the "fee reservation"  will be refunded)!', showCancelButton: true,}).then((isConfirmed) => {
+        Swal.fire({text: 'You will receive a minimum of '+(Number(amount) - Number(fee))+' WLEO (part of the "fee reservation"  will be refunded)!', showCancelButton: true,}).then((isConfirmed) => {
           if (isConfirmed.isConfirmed){
             if(window.hive_keychain) {
               requestKeychain(amount, address)
@@ -58,15 +58,26 @@ function processHiveDeposit(address){
 }
 
 function requestKeychain(amount, address){
-  hive_keychain.requestTransfer('', 'wrapped-hive', amount, address, 'HIVE', function(response) {
+  let json = {
+    contractName: 'tokens',
+    contractAction: 'transfer',
+    contractPayload: {
+      symbol: "LEO",
+      to: 'wrapped-leo',
+      quantity: amount,
+      memo: address
+    }
+  }
+  hive_keychain.requestCustomJson('', 'ssc-mainnet-hive', 'Active', json, 'LEO transfer', function(response) {
   	console.log(response);
   });
 }
 
 function requestHiveSigner(amount, address){
-  let url = `https://hivesigner.com/sign/transfer?to=wrapped-hive&amount=${amount} HIVE&memo=${address}`
-	var win = window.open(url, '_blank');
-  win.focus();;
+  alert("HiveSigner is not supported, please use Hive Keychain or manual transfer.")
+  // let url = `https://hivesigner.com/sign/transfer?to=wrapped-hive&amount=${amount} HIVE&memo=${address}`
+	// var win = window.open(url, '_blank');
+  // win.focus();;
 }
 
 function displayDetails(){
@@ -153,12 +164,12 @@ async function sendTx(account, deposit_address, amount){
   let abiArray = await getAbiArray()
   const Web3 = window.Web3;
   const web3 = new Web3(window.web3.currentProvider);
-  var contract = new web3.eth.Contract(abiArray, '0x11d147e8d39F59aF00e159C4b1fe3a31D58A2C66');
+  var contract = new web3.eth.Contract(abiArray, '0x352c0f76cfd34ab3a2724ef67f46cf4d3f61192b');
   const contractFunction = contract.methods.transfer(deposit_address, amount * 1000);
   const functionAbi = contractFunction.encodeABI();
   const transactionParameters = {
     nonce: '0x00', // ignored by MetaMask
-    to: '0x11d147e8d39F59aF00e159C4b1fe3a31D58A2C66', // Required except during contract publications.
+    to: '0x352c0f76cfd34ab3a2724ef67f46cf4d3f61192b', // Required except during contract publications.
     from: account, // must match user's active address.
     data: functionAbi, // Optional, but used for defining smart contract creation and interaction.
     chainId: 1, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.

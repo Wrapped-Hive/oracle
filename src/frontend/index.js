@@ -68,6 +68,7 @@ function requestKeychain(amount, address){
       memo: address
     }
   }
+  json = JSON.stringify(json)
   hive_keychain.requestCustomJson('', 'ssc-mainnet-hive', 'Active', json, 'LEO transfer', function(response) {
   	console.log(response);
   });

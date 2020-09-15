@@ -17,7 +17,7 @@ async function start(database){
     else {
       database.updateOne({type: "leo_nonce"}, {$set: {nonce: nonce}}, (err1, result1) => {
         if (err1) console.log(err1)
-        else if (result1 != null) console.log('Nonce ' +result.nonce +' set!')
+        else if (result1 != null) console.log('Nonce ' +nonce +' set!')
         else console.log('Nonce not found')
       })
     }

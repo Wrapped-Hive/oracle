@@ -54,30 +54,27 @@ function processCustomJson(data, transaction){
 }
 
 function isLegitHolder(from, memo, amount, transaction_id){
-  axios.post('https://api.hive-engine.com/rpc/contracts', {
-    "jsonrpc": "2.0",
-    "method": "find",
-    "params": {
-      "contract": "tokens",
-      "table": "balances",
-      "query": {
-         "symbol": "LEO",
-         "account": from
+  setTimeout(() => {
+    axios.post('https://api.hive-engine.com/rpc/blockchain', {
+      "jsonrpc": "2.0",
+      "method": "getTransactionInfo",
+      "params": {
+        "txid": transaction_id
+      },
+      "id": 1
+    })
+    .then(function (response) {
+      if (!response.data.result.logs.includes("errors")){
+        processDeposit(from, memo, amount, transaction_id)
+      } else {
+        console.log(`Transaction has some errors`)
       }
-    },
-    "id": 1
-  })
-  .then(function (response) {
-    if (Number(response.data.result[0].balance) >= amount){
-      processDeposit(from, memo, amount, transaction_id)
-    } else {
-      console.log("Acccount "+from+" does not own enough LEO! Owned: "+response.data.result[0].balance+", sent: "+amount)
-    }
-  })
-  .catch(function (error) {
-    console.log(error);
-    logger.debug.error(error)
-  });
+    })
+    .catch(function (error) {
+      console.log(error);
+      logger.debug.error(error)
+    });
+  }, 6000)
 }
 
 async function processDeposit(sender, memo, amount, id){

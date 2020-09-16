@@ -254,8 +254,8 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
     const op = {
       id: 'ssc-mainnet-hive',
       json: tx,
-      required_auths: [],
-      required_posting_auths: [config.hiveAccount],
+      required_auths: [config.hiveAccount],
+      required_posting_auths: [],
     };
     const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
     client.broadcast
@@ -288,8 +288,8 @@ function refundFeeToUser(unspent, to){
   const op = {
     id: 'ssc-mainnet-hive',
     json: tx,
-    required_auths: [],
-    required_posting_auths: [config.hiveAccount],
+    required_auths: [config.hiveAccount],
+    required_posting_auths: [],
   };
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast
@@ -353,8 +353,8 @@ function sendConfirmationMemo(hash, hive_user){
   const op = {
     id: 'ssc-mainnet-hive',
     json: tx,
-    required_auths: [],
-    required_posting_auths: [config.hiveAccount],
+    required_auths: [config.hiveAccount],
+    required_posting_auths: [],
   };
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast

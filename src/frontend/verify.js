@@ -4,7 +4,7 @@ function getConfig(cb){
     type : 'GET',
     dataType:'json',
     success : function(data) {
-      cb(data.deposit, data.contract, Number(data.balance))
+      cb(data.deposit, data.contract, data.balance)
     },
     error : function(request,error){
         alert("Failed to get data from server :(");

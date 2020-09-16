@@ -4,7 +4,7 @@ function getConfig(cb){
     type : 'GET',
     dataType:'json',
     success : function(data) {
-      cb(data.deposit, data.contract)
+      cb(data.deposit, data.contract, Number(data.balance))
     },
     error : function(request,error){
         alert("Failed to get data from server :(");
@@ -27,16 +27,11 @@ function getEthAddresses(cb){
 }
 
 async function getBalance(){
-  getConfig((account, contract) => {
-    hive.api.getAccounts([account], function(err, result) {
-      if (err) alert("Error getting data!")
-      else {
-        let number = result[0].balance.split('.')
-        document.getElementById("hive_balance").innerHTML = numberWithCommas(number[0]) + '<small>.'+number[1].split(" ")[0]+'</small>'
-        document.getElementById("hive_account").innerHTML = '<a href="https://hiveblocks.com/@'+account+'" target="_blank">@'+account+'</a>'
-        ethBalance(contract)
-      }
-    });
+  getConfig((account, contract, balance) => {
+    let number = balance.split('.')
+    document.getElementById("hive_balance").innerHTML = numberWithCommas(number[0]) + '<small>.'+number[1].split(" ")[0]+'</small>'
+    document.getElementById("hive_account").innerHTML = '<a href="https://hiveblocks.com/@'+account+'" target="_blank">@'+account+'</a>'
+    ethBalance(contract)
   })
 }
 

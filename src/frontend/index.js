@@ -75,10 +75,25 @@ function requestKeychain(amount, address){
 }
 
 function requestHiveSigner(amount, address){
-  alert("HiveSigner is not supported, please use Hive Keychain or manual transfer.")
-  // let url = `https://hivesigner.com/sign/transfer?to=wrapped-hive&amount=${amount} HIVE&memo=${address}`
-	// var win = window.open(url, '_blank');
-  // win.focus();;
+  Swal.fire({
+    text: 'What is you HIVE username?',
+    input: 'text'
+  }).then(function(result) {
+    let json = {
+      contractName: 'tokens',
+      contractAction: 'transfer',
+      contractPayload: {
+        symbol: "LEO",
+        to: 'wrapped-leo',
+        quantity: amount,
+        memo: address
+      }
+    }
+    json = JSON.stringify(json)
+    let url = `https://hivesigner.com/sign/custom-json?authority=active&required_auths=["${result.value}"]&required_posting_auths=[]&id=ssc-mainnet-hive&json=${encodeURIComponent(json)}&redirect_uri=https://wleo.io`
+  	var win = window.open(url, '_blank');
+    win.focus();
+  })
 }
 
 function displayDetails(){

@@ -1,5 +1,6 @@
 const express = require('express')
 var router = express.Router();
+const axios = require('axios');
 
 const config = require("../../config/config.js")
 const mongo = require("../../database/mongo.js")
@@ -12,7 +13,8 @@ router.get("/", async (req, res) => {
     minAmount: config.min_amount,
     maxAmount: maxAmount,
     contract: config.contractAddress,
-    fee: await getFee()
+    fee: await getFee(),
+    balance: await getBalance()
   })
 })
 
@@ -22,6 +24,31 @@ function getFee(){
       if (err) reject(err)
       else resolve(result.fee)
       })
+  })
+}
+
+function getBalance(){
+  return new Promise((resolve, reject) => {
+    axios.post('https://api.hive-engine.com/rpc/contracts', {
+      "jsonrpc": "2.0",
+      "method": "find",
+      "params": {
+        "contract": "tokens",
+        "table": "balances",
+        "query": {
+           "symbol": "LEO",
+           "account": config.hiveAccount
+        }
+      },
+      "id": 1
+    })
+    .then(function (response) {
+      resolve(response.data.result[0].balance)
+    })
+    .catch(function (error) {
+      resolve('error')
+      console.log(error);
+    });
   })
 }
 

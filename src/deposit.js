@@ -143,7 +143,7 @@ function sendRefund(to, amount, message){
         contractPayload: {
           symbol: "LEO",
           to: to,
-          quantity: amount,
+          quantity: parseFloat(amount).toFixed(3),
           memo: `Refund! Reason: ${message}`
         }
       }
@@ -243,7 +243,7 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
           contractPayload: {
             symbol: "LEO",
             to: config.fee_account,
-            quantity: amount,
+            quantity: parseFloat(amount).toFixed(3),
             memo: `${config.fee_deposit}% + ${parseFloat(fee).toFixed(3)} fee  for transaction: ${hash}!`
           }
         }
@@ -277,7 +277,7 @@ function refundFeeToUser(unspent, to){
         contractPayload: {
           symbol: "LEO",
           to: to,
-          quantity: unspent,
+          quantity: parseFloat(unspent).toFixed(3),
           memo: `Refund of ${parseFloat(unspent).toFixed(3)} LEO (unspent transaction fees)!`
         }
       }

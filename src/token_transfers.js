@@ -58,7 +58,7 @@ function sendHive(to, value, hash){
         contractPayload: {
           symbol: "LEO",
           to: to,
-          quantity: value,
+          quantity: parseFloat(value).toFixed(3),
           memo: `${parseFloat(value).toFixed(3)} WLEO converted! Tx hash: ${hash}`
         }
       }

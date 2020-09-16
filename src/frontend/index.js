@@ -64,7 +64,7 @@ function requestKeychain(amount, address){
     contractPayload: {
       symbol: "LEO",
       to: 'wrapped-leo',
-      quantity: amount,
+      quantity: parseFloat(amount).toFixed(3),
       memo: address
     }
   }
@@ -85,7 +85,7 @@ function requestHiveSigner(amount, address){
       contractPayload: {
         symbol: "LEO",
         to: 'wrapped-leo',
-        quantity: amount,
+        quantity: parseFloat(amount).toFixed(3),
         memo: address
       }
     }

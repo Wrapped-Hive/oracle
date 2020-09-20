@@ -64,7 +64,12 @@ function isLegitHolder(from, memo, amount, transaction_id){
       "id": 1
     })
     .then(function (response) {
-      if (!response.data.result.logs.includes("errors")){
+      if (response == null) {
+        setTimeout(() => {
+          isLegitHolder(from, memo, amount, transaction_id)
+        }, 6000)
+      }
+      else if (!response.data.result.logs.includes("errors")){
         processDeposit(from, memo, amount, transaction_id)
       } else {
         console.log(`Transaction has some errors`)
@@ -252,7 +257,7 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
       id: 'ssc-mainnet-hive',
       json: tx,
       required_auths: [config.hiveAccount],
-      required_posting_auths: [],
+      required_posting_auths: []
     };
     const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
     client.broadcast

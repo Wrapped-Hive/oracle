@@ -64,7 +64,6 @@ function isLegitHolder(from, memo, amount, transaction_id){
       "id": 1
     })
     .then(function (response) {
-      console.log(response, response == null)
       if (response == null || response.data == null || response.data.result == null) {
         setTimeout(() => {
           isLegitHolder(from, memo, amount, transaction_id)

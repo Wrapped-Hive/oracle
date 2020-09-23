@@ -50,7 +50,7 @@ function processHiveDeposit(address){
           Swal.fire({text: 'You will receive a minimum of '+(Number(amount) - Number(fee) - (Number(amount) * 0.0025))+' WLEO (part of the "fee reservation"  will be refunded)!', showCancelButton: true,}).then((isConfirmed) => {
             if (isConfirmed.isConfirmed){
               if(window.hive_keychain) {
-                requestKeychain(amount, address, username)
+                requestKeychain(amount, address, username.value)
               } else {
                 requestHiveSigner(amount, address)
               }

@@ -200,10 +200,16 @@ async function sendTokens(address, amount, from, full_amount){
     sendConfirmationMemo(hash, from)
     sendFeeAmount(amount, hash, fee, gas_spent, gasPriceGwei, from)
   } catch (e) {
-    console.log(e)
-    logger.debug.error(e)
-    sendRefund(from, full_amount, `Internal server error`)
-    logToDatabase(e, `Error while sending ${amount} tokens to ${address}, but refund was attempted.`)
+    if (e.includes("Transaction was not mined within 750 seconds")){
+      console.log(e)
+      logger.debug.error(e)
+      logToDatabase(e, `Error while sending ${amount} tokens to ${address}, but refund was NOT attempted, since it's 750 seconds error`)
+    } else  {
+      console.log(e)
+      logger.debug.error(e)
+      sendRefund(from, full_amount, `Internal server error`)
+      logToDatabase(e, `Error while sending ${amount} tokens to ${address}, but refund was attempted.`)
+    }
   }
 }
 

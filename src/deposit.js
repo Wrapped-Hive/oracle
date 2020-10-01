@@ -181,11 +181,11 @@ async function sendTokens(address, amount, from, full_amount){
     var contractFunction = contract.methods.mint(address, transferAmount);
     var functionAbi = contractFunction.encodeABI();
     var gasPriceGwei = await getRecomendedGasPrice();
-    var nonce = await web3.eth.getTransactionCount(config.ethereumAddress, 'pending')//getNonce() //web3.eth.getTransactionCount(config.ethereumAddress)
+    var nonce = await getNonce() //web3.eth.getTransactionCount(config.ethereumAddress)
     var rawTransaction = {
         "from": config.ethereumAddress,
         "nonce": "0x" + nonce.toString(16),
-        "gasPrice": web3.utils.toHex(30/*gasPriceGwei*/ * 1e9),
+        "gasPrice": web3.utils.toHex(gasPriceGwei * 1e9),
         "gasLimit": web3.utils.toHex(config.ethereum_config.gasLimit),
         "to": config.contractAddress,
         "data": functionAbi,

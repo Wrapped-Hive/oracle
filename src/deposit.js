@@ -44,7 +44,7 @@ function start(){
 function processCustomJson(data, transaction){
   if (data.id == 'ssc-mainnet-hive'){
     let json  = JSON.parse(data.json)
-    if (json.contractName == 'tokens' && json.contractAction == 'transfer' && json.contractPayload.symbol == 'LEO' && json.contractPayload.to == config.hiveAccount){
+    if (json.contractName == 'tokens' && json.contractAction == 'transfer' && json.contractPayload.symbol == 'WEED' && json.contractPayload.to == config.hiveAccount){
       let from = data.required_auths[0]
       let memo = json.contractPayload.memo
       let amount = json.contractPayload.quantity
@@ -93,11 +93,11 @@ async function processDeposit(sender, memo, amount, id){
           let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
           if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
           else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use Ethereum address as memo!');
-          else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' LEO!');
-          else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' LEO!');
-          else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' LEO!');
+          else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount+' WEED!');
+          else if (isCorrect == 'over_max_amount') sendRefund(sender, amount, 'Please send less than '+config.max_amount+' WEED!');
+          else if (isCorrect == 'fee_higher_than_deposit') sendRefund(sender, amount, 'Current ETH fee is '+fee+' WEED!');
         } else {
-          console.log("Hive transaction already processed (db)!")
+          console.log("WEED transaction already processed (db)!")
         }
       })
       .catch((err) => {
@@ -105,7 +105,7 @@ async function processDeposit(sender, memo, amount, id){
         logToDatabase(err, `Error while checking transaction ${id}`)
       })
   } else {
-    console.log("Hive transaction already processed (array)!")
+    console.log("WEED transaction already processed (array)!")
   }
 }
 
@@ -146,9 +146,9 @@ function sendRefund(to, amount, message){
         contractName: 'tokens',
         contractAction: 'transfer',
         contractPayload: {
-          symbol: "LEO",
+          symbol: "WEED",
           to: to,
-          quantity: parseFloat(amount).toFixed(3),
+          quantity: parseFloat(amount).toFixed(8),
           memo: `Refund! Reason: ${message}`
         }
       }
@@ -162,16 +162,16 @@ function sendRefund(to, amount, message){
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast
     .json(op, key)
-    .then(res => console.log(`Refund of ${amount} LEO sent to ${to}! Reason: ${message}`))
+    .then(res => console.log(`Refund of ${amount} WEED sent to ${to}! Reason: ${message}`))
     .catch((err) => {
       logger.debug.error(err)
-      logToDatabase(err, `Error while sending ${amount} LEO refund for ${to}`)
+      logToDatabase(err, `Error while sending ${amount} WEED refund for ${to}`)
     });
 }
 
 async function sendTokens(address, amount, from, full_amount){
   try {
-    console.log(`Sending ${amount} WLEO to ${address}, paid by ${from}`)
+    console.log(`Sending ${amount} WWEED to ${address}, paid by ${from}`)
     var fee = await getFee()
     var transferAmount_not_rounded = amount * 1000;
     var transferAmount = parseFloat(transferAmount_not_rounded - (Number(fee)* 1000) - ((transferAmount_not_rounded * config.fee_deposit) / 100)).toFixed(0)
@@ -181,7 +181,7 @@ async function sendTokens(address, amount, from, full_amount){
     var contractFunction = contract.methods.mint(address, transferAmount);
     var functionAbi = contractFunction.encodeABI();
     var gasPriceGwei = await getRecomendedGasPrice();
-    var nonce = await getNonce() //web3.eth.getTransactionCount(config.ethereumAddress)
+    var nonce = await web3.eth.getTransactionCount(config.ethereumAddress, 'pending') //getNonce() //web3.eth.getTransactionCount()
     var rawTransaction = {
         "from": config.ethereumAddress,
         "nonce": "0x" + nonce.toString(16),
@@ -215,10 +215,10 @@ async function sendTokens(address, amount, from, full_amount){
 
 async function getNonce(){ //use database, since web3.eth.getTransactionCount(config.ethereumAddress) does not return pending tx's
   return new Promise((resolve, reject) => {
-    database.findOne({type: "leo_nonce"}, (err, result) => {
+    database.findOne({type: "token_nonce"}, (err, result) => {
       if (err) reject(err)
       else {
-        database.updateOne({type: "leo_nonce"}, {$set: {nonce: Number(result.nonce) + 1}}, (err1, result1) => {
+        database.updateOne({type: "token_nonce"}, {$set: {nonce: Number(result.nonce) + 1}}, (err1, result1) => {
           if (err1) reject(err1)
           else if (result1 != null) resolve(result.nonce)
           else reject("nonce not found")
@@ -230,7 +230,7 @@ async function getNonce(){ //use database, since web3.eth.getTransactionCount(co
 
 function getFee(){
   return new Promise((resolve, reject) => {
-    database.findOne({type: "leo_fee"}, (err, result) => {
+    database.findOne({type: "token_fee"}, (err, result) => {
       if (err) reject(err)
       else resolve(result.fee)
       })
@@ -240,7 +240,7 @@ function getFee(){
 async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent, gasPriceGwei, to){
   try {
     let hive_in_eth = await getHiveEthPrice()
-    console.log("ETH/LEO price: "+hive_in_eth)
+    console.log("ETH/WEED price: "+hive_in_eth)
     let fee = ((gas_spent * gasPriceGwei) / 1000000000) / hive_in_eth //how much  did we actually burned?
     let percentage_fee = (transferAmount_not_fee * config.fee_deposit) / 100 // % fee
     let unspent_fee = Number(fixed_fee) - (Number(fee) + Number(percentage_fee)) //remove spent & percentage fee from reserved fee
@@ -252,10 +252,10 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
           contractName: 'tokens',
           contractAction: 'transfer',
           contractPayload: {
-            symbol: "LEO",
+            symbol: "WEED",
             to: config.fee_account,
-            quantity: parseFloat(amount).toFixed(3),
-            memo: `${config.fee_deposit}% + ${parseFloat(fee).toFixed(3)} fee  for transaction: ${hash}!`
+            quantity: parseFloat(amount).toFixed(8),
+            memo: `${config.fee_deposit}% + ${parseFloat(fee).toFixed(8)} fee  for transaction: ${hash}!`
           }
         }
     ]);
@@ -268,10 +268,10 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
     const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
     client.broadcast
       .sendOperations([op], key)
-      .then(res => console.log(`Fee of ${percentage_fee} (${config.fee_deposit}%) + ${fee} LEO sent to ${config.fee_account} for ${hash}`))
+      .then(res => console.log(`Fee of ${percentage_fee} (${config.fee_deposit}%) + ${fee} WEED sent to ${config.fee_account} for ${hash}`))
       .catch((err) => {
         logger.debug.error(err)
-        logToDatabase(err, `Error while sending ${amount} LEO fee`)
+        logToDatabase(err, `Error while sending ${amount} WEED fee`)
       });
     refundFeeToUser(unspent_fee, to)
   } catch (err) {
@@ -286,10 +286,10 @@ function refundFeeToUser(unspent, to){
         contractName: 'tokens',
         contractAction: 'transfer',
         contractPayload: {
-          symbol: "LEO",
+          symbol: "WEED",
           to: to,
-          quantity: parseFloat(unspent).toFixed(3),
-          memo: `Refund of ${parseFloat(unspent).toFixed(3)} LEO (unspent transaction fees)!`
+          quantity: parseFloat(unspent).toFixed(8),
+          memo: `Refund of ${parseFloat(unspent).toFixed(8)} WEED (unspent transaction fees)!`
         }
       }
   ]);
@@ -302,10 +302,10 @@ function refundFeeToUser(unspent, to){
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast
     .json(op, key)
-    .then(res => console.log(`Fee refund of ${unspent} LEO sent to ${to}.`))
+    .then(res => console.log(`Fee refund of ${unspent} WEED sent to ${to}.`))
     .catch((err) => {
       logger.debug.error(err)
-      logToDatabase(err, `Error while refunding ${unspent} LEO fee`)
+      logToDatabase(err, `Error while refunding ${unspent} WEED fee`)
     });
 }
 
@@ -351,9 +351,9 @@ function sendConfirmationMemo(hash, hive_user){
         contractName: 'tokens',
         contractAction: 'transfer',
         contractPayload: {
-          symbol: "LEO",
+          symbol: "WEED",
           to: hive_user,
-          quantity: '0.001',
+          quantity: '0.00000001',
           memo: `Tokens sent! Hash: ${hash}!`
         }
       }

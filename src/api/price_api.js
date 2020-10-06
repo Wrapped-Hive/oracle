@@ -3,10 +3,10 @@ var router = express.Router();
 const axios = require('axios');
 
 router.get("/", async (req, res) => {
-  let price = await getPrice("market", "buyBook", {"symbol":"LEO"}, 0)
+  let price = await getPrice("market", "buyBook", {"symbol":"WEED"}, 0)
   let eth = await getHiveInEth()
   res.json({
-    token: "LEO",
+    token: "WEED",
     current_hive_price: Number(price[price.length - 1].price),
     current_eth_price: Number(parseFloat(eth * Number(price[price.length - 1].price)).toFixed(8))
   })

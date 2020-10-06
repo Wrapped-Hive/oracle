@@ -1,17 +1,17 @@
-#### Wrapped Hive
+#### Wrapped WEED
 
-HIVE tokens wrapped in ERC-20 tokens
+wWEED tokens wrapped in ERC-20 tokens
 
 ---
 
 ***Abstract***
 
-WLEO oracle serves as an exchange between LEO and wLEO, ERC20 tokens on Ethereum network.
+WWEED oracle serves as an exchange between WEED and wWEED, ERC20 tokens on Ethereum network.
 
-When new deposits with Ethereum address as memo are received, app will mint new WHIVE tokens and sent them to user.
-To process the withdraw from wLEO to LEO, app generates deposit address for each user with 7 days expiration.
+When new deposits with Ethereum address as memo are received, app will mint new wWEED tokens and sent them to user.
+To process the withdraw from wWEED to WEED, app generates deposit address for each user with 7 days expiration.
 
-This allows for address reuse and reduce number of addresses to monitor (and later burn deposited wLEO) to save on ETH fees. To process the wLEO transfers, app use https://ethplorer.io API.
+This allows for address reuse and reduce number of addresses to monitor (and later burn deposited wWEED) to save on ETH fees. To process the wWEED transfers, app use https://ethplorer.io API.
 
 ---
 
@@ -23,7 +23,7 @@ Response format: JSON
 
 `POST` `/create`
 
-Create new conversion (wLEO -> LEO) request and ethereum deposit address.
+Create new conversion (wWEED -> WEED) request and ethereum deposit address.
 
 Deposit address reservation will expire in 7 days and address will be reused.
 
@@ -84,12 +84,12 @@ Collection: `status`
 ```
 {
   _id: someid,
-  type: "leo_nonce",
+  type: "token_nonce",
   nonce: 0
 },
 {
   _id: someid,
-  type: "leo_fee",
+  type: "token_fee",
   fee: "51.000"
 }
 ```

@@ -56,10 +56,10 @@ function sendHive(to, value, hash){
         contractName: 'tokens',
         contractAction: 'transfer',
         contractPayload: {
-          symbol: "LEO",
+          symbol: "WEED",
           to: to,
-          quantity: parseFloat(value).toFixed(3),
-          memo: `${parseFloat(value).toFixed(3)} WLEO converted! Tx hash: ${hash}`
+          quantity: parseFloat(value).toFixed(8),
+          memo: `${parseFloat(value).toFixed(8)} wWEED converted! Tx hash: ${hash}`
         }
       }
   ]);
@@ -72,10 +72,10 @@ function sendHive(to, value, hash){
   const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
   client.broadcast
     .json(op, key)
-    .then(res => console.log(`Converted ${value} LEO sent to ${to}!`))
+    .then(res => console.log(`Converted ${value} WEED sent to ${to}!`))
     .catch((err) => {
       logger.debug.error(err)
-      logToDatabase(err, `Failed to send ${parseFloat(value).toFixed(3)} LEO to ${to} for tranasction: ${hash}`)
+      logToDatabase(err, `Failed to send ${parseFloat(value).toFixed(8)} wWEED to ${to} for tranasction: ${hash}`)
     });
 }
 

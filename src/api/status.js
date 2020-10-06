@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
 
 function getFee(){
   return new Promise((resolve, reject) => {
-    database.findOne({type: "leo_fee"}, (err, result) => {
+    database.findOne({type: "token_fee"}, (err, result) => {
       if (err) reject(err)
       else resolve(result.fee)
       })
@@ -36,7 +36,7 @@ function getBalance(){
         "contract": "tokens",
         "table": "balances",
         "query": {
-           "symbol": "LEO",
+           "symbol": "WEED",
            "account": config.hiveAccount
         }
       },

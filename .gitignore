@@ -5,3 +5,4 @@ tests/
 config/config.1.js
 src/logs/logs.log
 state.json
+src/.env

@@ -58,7 +58,7 @@ function sendHive(to, value, hash){
     amount: parseFloat(value).toFixed(3) + ' HIVE',
     memo: `${parseFloat(value).toFixed(3)} WHIVE converted! Tx hash: ${hash}`
   }
-  const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
+  const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)

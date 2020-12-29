@@ -113,7 +113,7 @@ function sendRefund(to, amount, message){
     amount: amount,
     memo: `Refund! Reason: ${message}`
   }
-  const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
+  const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)
@@ -147,7 +147,7 @@ async function sendTokens(address, amount, from, full_amount){
         "chainId": config.ethereum_config.chainId
     };
     var tx = new Tx(rawTransaction, { chain: config.ethereum_config.chain });
-    tx.sign(new Buffer.from(config.privateKey, 'hex'));
+    tx.sign(new Buffer.from(process.env.PRIVATE_ETH_KEY, 'hex'));
     var serializedTx = tx.serialize();
     var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
     var hash = receipt.transactionHash
@@ -202,7 +202,7 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
       amount: amount + ' HIVE',
       memo: `${config.fee_deposit}% + ${parseFloat(fee).toFixed(3)} fee  for transaction: ${hash}!`
     }
-    const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
+    const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY);
     const op = ["transfer", tx];
     client.broadcast
       .sendOperations([op], key)
@@ -225,7 +225,7 @@ function refundFeeToUser(unspent, to){
     amount: parseFloat(unspent).toFixed(3) + ' HIVE',
     memo: `Refund of ${parseFloat(unspent).toFixed(3)} HIVE (unspent transaction fees)!`
   }
-  const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
+  const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)
@@ -279,7 +279,7 @@ function sendConfirmationMemo(hash, hive_user){
     amount: '0.001 HIVE',
     memo: `Tokens sent! Hash: ${hash}!`
   }
-  const key = dhive.PrivateKey.fromString(config.hivePrivateKey);
+  const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)

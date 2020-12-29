@@ -1,3 +1,4 @@
+require('dotenv').config()
 var express =  require("express");
 var app = express();
 var bodyParser = require("body-parser");
@@ -43,7 +44,7 @@ function main() {
   const calculate_fee = require("./calculate_fee.js");
 
   deposit.start() //start scanning HIVE for deposits
-  
+
   track.start((result) => { //start checking token transactions
     transfers.processTokenTransfer(result)
   })

@@ -2,6 +2,8 @@
 
 HIVE tokens wrapped in ERC-20 tokens
 
+***Hive Engine Token are deprecated, read https://gist.github.com/fbslo/52b5ce87024e994719ed8032d52b76d5 for more information and updated code!*** 
+
 ---
 
 ***Abstract***

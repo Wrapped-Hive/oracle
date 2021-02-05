@@ -9,6 +9,8 @@ const { Hive } = require('@splinterlands/hive-interface');
 const abiArray = require("./abi.js")
 const config = require("../config/config.js")
 
+const bsc = require("./bsc/index.js")
+
 const client = new dhive.Client(config.hive_api_nodes);
 const web3 = new Web3(new Web3.providers.HttpProvider(config.ethEndpoint));
 const hive = new Hive({rpc_error_limit: 5});
@@ -31,6 +33,7 @@ function start(){
          let type = op[0]
          let data = op[1]
          if (type == 'transfer' && data.to == config.hiveAccount) processDeposit(data.from, data.memo, data.amount, transaction.transaction_id)
+         if (type == 'transfer' && data.to == config.bscAccount) bsc.processDeposit(data.from, data.memo, data.amount, transaction.transaction_id)
        }
      }
    }

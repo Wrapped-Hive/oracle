@@ -26,7 +26,12 @@ var config = {
     "chain": "ropsten", //mainnet...
     "gasLimit": 100000
   },
-  "coingecko_api": "secret"
+  "coingecko_api": "secret",
+  "bscAccount": "wrapped-hive-bsc",
+  "min_amount_bsc": 1,
+  "max_amount_bsc": -2,
+  "ethereumAddress_bsc": 'something',
+  "contractAddress_bsc": "something"
 }
 
 

@@ -78,7 +78,7 @@ async function isTransferInCorrectFormat(memo, amount){
 
 function sendRefund(to, amount, message){
   const tx = {
-    from: config.hiveAccount,
+    from: config.bscAccount,
     to: to,
     amount: amount,
     memo: `Refund! Reason: ${message}`

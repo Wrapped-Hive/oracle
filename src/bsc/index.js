@@ -24,6 +24,7 @@ function processDeposit(sender, memo, amount, id){
           insertTransaction(id)
           let isCorrect = await isTransferInCorrectFormat(memo, amount)
           if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
+          else if (isCorrect == 'ignore') console.log(`Ignore this transaction from ${sender} of ${amount}`)
           else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use BSC address as memo!');
           else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
           else if (isCorrect == 'under_min_amount') sendRefund(sender, amount, 'Please send more than '+config.min_amount_bsc+' HIVE!');
@@ -69,7 +70,8 @@ async function isTransferInCorrectFormat(memo, amount){
   const value = Number(amount.split(" ")[0])
   const symbol = amount.split(" ")[1]
 
-  if (web3.utils.isAddress(memo) != true) return 'not_eth_address';
+  if (memo == 'ignore') return 'ignore';
+  else if (web3.utils.isAddress(memo) != true) return 'not_eth_address';
   else if (symbol != "HIVE") return 'not_hive';
   else if (value <= config.min_amount_bsc) return "under_min_amount"
   else if (config.max_amount_bsc > 0 && value > config.max_amount_bsc) return "over_max_amount"

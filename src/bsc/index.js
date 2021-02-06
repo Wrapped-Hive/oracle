@@ -83,7 +83,7 @@ function sendRefund(to, amount, message){
     amount: amount,
     memo: `Refund! Reason: ${message}`
   }
-  const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY);
+  const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY_BSC);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)

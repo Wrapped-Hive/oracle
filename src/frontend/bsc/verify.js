@@ -30,6 +30,7 @@ function getPrice(balance){
     dataType:'json',
     success : function(data) {
       let number = parseFloat(data.market_data.current_price.usd).toFixed(3) * balance + ''
+      number = parseFloat(number).toFixed(3)
       let value = number.split('.')
       let decimals = value[1].substring(0, 2)
       document.getElementById("price").innerHTML =numberWithCommas(value[0]) + '<small>.'+decimals+'</small>'
@@ -41,12 +42,13 @@ function getPrice(balance){
 }
 
 async function getTokenSupply(){
-  console.log('here')
   let web3 = new Web3('https://bsc-dataseed.binance.org/')
   let contract = new web3.eth.Contract(abi, '0x347f041189fb4f005999db07a009d2ff63646c4a');
   let supply = await contract.methods.totalSupply().call() / 1000
-  document.getElementById('whive_balance').innerHTML = parseFloat(supply).toFixed(3)
-  getPrice(parseFloat(supply).toFixed(3))
+  let result = parseFloat(supply).toFixed(3)
+  let number = result.split('.')
+  document.getElementById('whive_balance').innerHTML = numberWithCommas(number[0]) + '<small>.'+number[1].split(" ")[0]+'</small>'
+  getPrice(result)
 }
 
 document.addEventListener('DOMContentLoaded', function() {

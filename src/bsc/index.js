@@ -137,8 +137,8 @@ async function sendFeeAmount(hash){
     const tx = {
       from: config.bscAccount,
       to: config.fee_account,
-      amount: '1.000 HIVE',
-      memo: `1.000 HIVE fee for transaction: ${hash}!`
+      amount: '0.999 HIVE',
+      memo: `0.999 HIVE fee for transaction: ${hash}!`
     }
     const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY_BSC);
     const op = ["transfer", tx];

@@ -45,8 +45,8 @@ async function getTokenSupply(){
   let web3 = new Web3('https://bsc-dataseed.binance.org/')
   let contract = new web3.eth.Contract(abi, '0x347f041189fb4f005999db07a009d2ff63646c4a');
   let supply = await contract.methods.totalSupply().call() / 1000
-  document.getElementById('whive_balance').innerHTML = supply
-  getPrice(supply)
+  document.getElementById('whive_balance').innerHTML = parseFloat(supply).toFixed(3)
+  getPrice(parseFloat(supply).toFixed(3))
 }
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -57,7 +57,7 @@ function displayDetails(){
     </div>
     <div class="col-md-8">
       <div class="main-card mb-3 card">
-        <div class="card-body"><h4 class="card-title">Deposit details</h4>
+        <div class="card-body"><h4 class="card-title">Conversion details</h4>
           <button class="mt-1 btn" onClick='requestMetaMask()'><img srcset="/assets/images/metamask.png 10x"></button>
         </div>
       </div>

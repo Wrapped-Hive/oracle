@@ -71,7 +71,7 @@ async function isTransferInCorrectFormat(memo, amount){
 
   if (web3.utils.isAddress(memo) != true) return 'not_eth_address';
   else if (symbol != "HIVE") return 'not_hive';
-  else if (value =< config.min_amount_bsc) return "under_min_amount"
+  else if (value <= config.min_amount_bsc) return "under_min_amount"
   else if (config.max_amount_bsc > 0 && value > config.max_amount_bsc) return "over_max_amount"
   else return true;
 }

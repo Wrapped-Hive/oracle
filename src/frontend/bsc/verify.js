@@ -6,7 +6,7 @@ async function getBalance(){
     else {
       let number = result[0].balance.split('.')
       document.getElementById("hive_balance").innerHTML = numberWithCommas(number[0]) + '<small>.'+number[1].split(" ")[0]+'</small>'
-      document.getElementById("hive_account").innerHTML = '<a href="https://BHIVElocks.com/@'+account+'" target="_blank">@'+account+'</a>'
+      document.getElementById("hive_account").innerHTML = '<a href="https://hiveblocks.com/@'+account+'" target="_blank">@'+account+'</a>'
       ethBalance(contract)
       getTokenSupply()
     }
@@ -19,7 +19,7 @@ function numberWithCommas(x) {
 
 function ethBalance(contract){
   let address = '0x347f041189fb4f005999db07a009d2ff63646c4a'
-  document.getElementById('eth_addresses').innerHTML += '<li class="list-group-item"><a href="https://etherscan.io/address/'+address+'" target="_blank">'+address+'</a></li>'
+  document.getElementById('eth_addresses').innerHTML += '<li class="list-group-item"><a href="https://bscscan.com/address/'+address+'" target="_blank">'+address+'</a></li>'
 }
 
 

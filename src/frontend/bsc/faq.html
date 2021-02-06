@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Language" content="en">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>WHIVE</title>
+    <title>BHIVE - FAQ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="Oracle WHIVE">
     <meta name="msapplication-tap-highlight" content="no">
@@ -21,6 +21,7 @@
     * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
     -->
 <link href="./main.css" rel="stylesheet"></head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="./index.js" charset="utf-8"></script>
@@ -98,25 +99,25 @@
                             <ul class="vertical-nav-menu">
 								<li class="app-sidebar__heading">Oracle</li>
 								<li>
-									<a href="/">
+									<a href="/bsc/">
 									<i class="metismenu-icon fa fa-cogs"></i>
-									WHIVE
+									BHIVE
                   </a>
               </li>
               <li>
-                <a href="/verify.html">
+                <a href="/bsc/verify.html">
                 <i class="metismenu-icon fa fa-search-dollar"></i>
                 Verify supply
                 </a>
             </li>
             <li>
-              <a href="/faq.html">
+              <a href="/bsc/faq.html">
               <i class="metismenu-icon fa fa-question-circle"></i>
               FAQ
               </a>
           </li>
             <li>
-              <a href="https://etherscan.io/address/0x11d147e8d39F59aF00e159C4b1fe3a31D58A2C66" target="_blank">
+              <a href="https://bscscan.com/token/0x347f041189fb4f005999db07a009d2ff63646c4a" target="_blank">
               <i class="metismenu-icon fa fa-file-contract"></i>
               Contract
               </a>
@@ -152,26 +153,26 @@
 									Ecency.com
                                     </a>
                                 </li>
-								<li class="app-sidebar__heading">Ethereum:</li>
-								<li>
-									<a href="https://app.uniswap.org/#/swap?outputCurrency=0x11d147e8d39F59aF00e159C4b1fe3a31D58A2C66" target="_blank">
+								<li class="app-sidebar__heading">Binance Smart Chain:</li>
+                <li>
+									<a href="https://exchange.pancakeswap.finance/#/swap?outputCurrency=0x347f041189fb4f005999db07a009d2ff63646c4a" target="_blank">
 									<i class="metismenu-icon fa fa-globe"></i>
-									Uniswap
+									PancakeSwap
                                     </a>
                                 </li>
               <li>
-								<a href="https://uniswap.info/token/0x11d147e8d39f59af00e159c4b1fe3a31d58a2c66" target="_blank">
+								<a href="https://pancakeswap.info/token/0x347f041189fb4f005999db07a009d2ff63646c4a" target="_blank">
 								<i class="metismenu-icon fa fa-info-circle"></i>
-								Uniswap.info
+								pancakeSwap.info
                                   </a>
                               </li>
-              <li class="app-sidebar__heading">Binance Smart Chain:</li>
-              <li>
-                <a href="/bsc" target="_blank">
-                <i class="metismenu-icon fa fa-bolt"></i>
-                BHive
-                                  </a>
-                              </li>
+            <li class="app-sidebar__heading">Ethereum:</li>
+            <li>
+              <a href="/" target="_blank">
+              <i class="metismenu-icon fab fa-ethereum"></i>
+              Wrapped Hive
+                                </a>
+                            </li>
 							</ul>
                         </div>
                     </div>
@@ -186,47 +187,58 @@
                         <i class="fa fa-cogs"></i>
                     </div>
                     <div>
-	                     Wrapped Hive
-                      <div class="page-title-subheading">
-		                   The gateway between HIVE and ETH.
-                      </div>
+                        Hive BEP20
+                       <div class="page-title-subheading">
+                        The gateway between HIVE and Binance Smart Chain.
+                       </div>
                     </div>
                     </div>
                   </div>
               </div>
-						<div class="row">
-							<div class="col-md-2">
-							</div>
-							<div class="col-md-8">
-								<div class="main-card mb-3 card">
-									<div class="card-body"><h4 class="card-title">HIVE to WHIVE</h4>
-										<p>Send your HIVE to the Ethereum blockchain and create WHIVE</p>
-										<p><input name="eth" id="eth" placeholder="Enter your ethereum address" type="text" class="form-control"></p>
-                    <div id='invalid_eth_address'></div>
-										<p><button class="mt-1 btn btn-primary" onCLick='isEthereumAddressCorrect()'>Submit</button></p>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-2">
-							</div>
-          </div>
 
-						<div class="row">
-							<div class="col-md-2">
-							</div>
-							<div class="col-md-8">
-								<div class="main-card mb-3 card">
-									<div class="card-body"><h4 class="card-title">WHIVE to HIVE</h4>
-										<p>Send your WHIVE to receive HIVE tokens</p>
-										<p><input name="hive" id="hive" placeholder="Enter your Hive user name" type="hive" class="form-control"></p>
-                    <p><button class="mt-1 btn btn-primary" onClick='displayDetails()'>Submit</button></p>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-2">
-							</div>
-              </div>
-              <span id='deposit_data'></span>
+              <div class="col-md-12">
+                <div id="accordion" class="accordion-wrapper mb-3">
+                    <div class="card">
+                        <div id="headingOne" class="card-header">
+                            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="true" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block">
+                                <h5 class="m-0 p-0">What is Hive BEP20?</h5>
+                            </button>
+                        </div>
+                        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse show">
+                            <div class="card-body">Hive BEP20 (BHIVE) is an Binanace Smart Chain BEP20 token that represents HIVE. Each BHIVE is backed by real HIVE and can be converted back to HIVE at any time.</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div id="headingTwo" class="b-radius-0 card-header">
+                            <button type="button" data-toggle="collapse" data-target="#collapseOne2" aria-expanded="false" aria-controls="collapseTwo" class="text-left m-0 p-0 btn btn-link btn-block"><h5 class="m-0 p-0">How can I convert HIVE to BHIVE?</h5></button>
+                        </div>
+                        <div data-parent="#accordion" id="collapseOne2" class="collapse">
+                            <div class="card-body">To receive BHIVE, send HIVE to <a href='https://BHIVElocks.com/@wrapped-hive-bsc' target='_blank'>@wrapped-hive-bsc</a> with your BSC address as a memo.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div id="headingFive" class="b-radius-0 card-header">
+                            <button type="button" data-toggle="collapse" data-target="#collapseOne5" aria-expanded="false" aria-controls="collapseTwo" class="text-left m-0 p-0 btn btn-link btn-block"><h5 class="m-0 p-0">How can I convert WHIVE to HIVE?</h5></button>
+                        </div>
+                        <div data-parent="#accordion" id="collapseOne5" class="collapse">
+                            <div class="card-body">To receive HIVE, enter your Hive username into "BHIVE to HIVE" form (front page). You need to have MetaMask installed. Alternatively, you can use your favourite method of interacting with smart contract (BscScan.com/direct RPC calls/...) and call <code>convert</code> method with parameters: <code>amountOfTokens, username</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div id="headingFour" class="card-header">
+                            <button type="button" data-toggle="collapse" data-target="#collapseOne4" aria-expanded="false" aria-controls="collapseThree" class="text-left m-0 p-0 btn btn-link btn-block"><h5 class="m-0 p-0">Where can I get some help?</h5></button>
+                        </div>
+                        <div data-parent="#accordion" id="collapseOne4" class="collapse">
+                            <div class="card-body">Join our discord server <a href="https://discord.gg/ebQHNat" target='_blank'>https://discord.gg/ebQHNat</a>. For security related issues send an email to admin[at]fbslo[dot]net</a>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
           </div>
 				</div>
         </div>

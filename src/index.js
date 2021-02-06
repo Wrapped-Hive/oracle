@@ -42,12 +42,18 @@ function main() {
   const deposit = require("./deposit.js");
   const transfers = require("./token_transfers.js");
   const calculate_fee = require("./calculate_fee.js");
+  const bsc_conversions = require("./bsc/trackConversions.js")
 
   deposit.start() //start scanning HIVE for deposits
 
   track.start((result) => { //start checking token transactions
     transfers.processTokenTransfer(result)
   })
+
+  bsc_conversions.checkForConversions()
+  setInterval(() => {
+    bsc_conversions.checkForConversions()
+  }, 1000 * 60)
 
   calculate_fee.calculate()
   setInterval(() => {

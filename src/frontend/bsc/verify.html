@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Language" content="en">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>WHIVE</title>
+    <title>BHIVE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="Oracle WHIVE">
     <meta name="msapplication-tap-highlight" content="no">
@@ -39,6 +39,7 @@
     * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
     -->
 <link href="./main.css" rel="stylesheet"></head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="./verify.js" charset="utf-8"></script>
@@ -117,25 +118,25 @@
                             <ul class="vertical-nav-menu">
 								<li class="app-sidebar__heading">Oracle</li>
 								<li>
-									<a href="/">
+									<a href="/bsc/">
 									<i class="metismenu-icon fa fa-cogs"></i>
-									WHIVE
+									BHIVE
                       </a>
                   </li>
                   <li>
-                    <a href="/verify.html">
+                    <a href="/bsc/verify.html">
                     <i class="metismenu-icon fa fa-search-dollar"></i>
                     Verify supply
                     </a>
                 </li>
                 <li>
-                  <a href="/faq.html">
+                  <a href="/bsc/faq.html">
                   <i class="metismenu-icon fa fa-question-circle"></i>
                   FAQ
                   </a>
               </li>
                 <li>
-                  <a href="https://etherscan.io/address/0x11d147e8d39F59aF00e159C4b1fe3a31D58A2C66" target="_blank">
+                  <a href="https://bscscan.com/token/0x347f041189fb4f005999db07a009d2ff63646c4a" target="_blank">
                   <i class="metismenu-icon fa fa-file-contract"></i>
                   Contract
                   </a>
@@ -171,24 +172,24 @@
                   Ecency.com
                                     </a>
                                 </li>
-								<li class="app-sidebar__heading">Ethereum:</li>
-								<li>
-									<a href="https://app.uniswap.org/#/swap?outputCurrency=0x11d147e8d39F59aF00e159C4b1fe3a31D58A2C66" target="_blank">
+								<li class="app-sidebar__heading">Binance Smart Chain:</li>
+                <li>
+									<a href="https://exchange.pancakeswap.finance/#/swap?outputCurrency=0x347f041189fb4f005999db07a009d2ff63646c4a" target="_blank">
 									<i class="metismenu-icon fa fa-globe"></i>
-									Uniswap
+									PancakeSwap
                                     </a>
                                 </li>
               <li>
-  							<a href="https://uniswap.info/token/0x11d147e8d39f59af00e159c4b1fe3a31d58a2c66" target="_blank">
-  							<i class="metismenu-icon fa fa-info-circle"></i>
-  							Uniswap.info
+								<a href="https://pancakeswap.info/token/0x347f041189fb4f005999db07a009d2ff63646c4a" target="_blank">
+								<i class="metismenu-icon fa fa-info-circle"></i>
+								pancakeSwap.info
                                   </a>
                               </li>
-            <li class="app-sidebar__heading">Binance Smart Chain:</li>
+            <li class="app-sidebar__heading">Ethereum:</li>
             <li>
-              <a href="/bsc" target="_blank">
-              <i class="metismenu-icon fa fa-bolt"></i>
-              BHive
+              <a href="/" target="_blank">
+              <i class="metismenu-icon fab fa-ethereum"></i>
+              Wrapped Hive
                                 </a>
                             </li>
 							</ul>
@@ -220,8 +221,8 @@
                       <div class="widget-content-outer">
                           <div class="widget-content-wrapper">
                               <div class="widget-content-left">
-                                  <div class="widget-heading">WHIVE</div>
-                                  <div class="widget-subheading">Wrapped Hive</div>
+                                  <div class="widget-heading">BHIVE</div>
+                                  <div class="widget-subheading">Hive BEP20</div>
                               </div>
                               <div class="widget-content-right">
                                   <div class="widget-numbers text-success" id='whive_balance'>Loading...</div>
@@ -256,7 +257,7 @@
                      </li>
                      <li class="nav-item">
                          <a role="tab" class="nav-link" id="tab-c1-1" data-toggle="tab" href="#tab-animated1-1">
-                             <span class="nav-text">Ethereum addresses</span>
+                             <span class="nav-text">BEP20 token</span>
                          </a>
                      </li>
                  </ul>

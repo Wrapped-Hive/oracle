@@ -22,8 +22,7 @@ function processDeposit(sender, memo, amount, id){
       .then(async (result) => {
         if (result == false){
           insertTransaction(id)
-          var fee = await getFee()
-          let isCorrect = await isTransferInCorrectFormat(memo, amount, fee)
+          let isCorrect = await isTransferInCorrectFormat(memo, amount)
           if (isCorrect == true) sendTokens(memo, amount.split(" ")[0], sender, amount);
           else if (isCorrect == 'not_eth_address') sendRefund(sender, amount, 'Please use BSC address as memo!');
           else if (isCorrect == 'not_hive') sendRefund(sender, amount, 'Please only send HIVE!');
@@ -44,7 +43,7 @@ function processDeposit(sender, memo, amount, id){
 
 function isAlreadyProcessed(id){
   return new Promise((resolve, reject) => {
-    let db_tx  = mongo.get().db("ETH-HIVE").collection("hive_transactions")
+    let db_tx = mongo.get().db("ETH-HIVE").collection("hive_transactions")
     db_tx.findOne({tx: id}, (err, result) => {
       if (err) reject(err)
       else {
@@ -66,7 +65,7 @@ function insertTransaction(id){
   })
 }
 
-async function isTransferInCorrectFormat(memo, amount, fee){
+async function isTransferInCorrectFormat(memo, amount){
   const value = Number(amount.split(" ")[0])
   const symbol = amount.split(" ")[1]
 
@@ -97,8 +96,7 @@ function sendRefund(to, amount, message){
 
 async function sendTokens(address, amount, from, full_amount){
   try {
-    console.log(`Sending ${amount} WHIVE to ${address} on BSC, paid by ${from}`)
-    var fee = await getFee()
+    console.log(`Sending ${amount - 1} BHIVE to ${address} on BSC, paid by ${from}. Fee: 1.000 HIVE`)
     var transferAmount_not_rounded = amount * 1000;
     var transferAmount = parseFloat(transferAmount_not_rounded - 1000).toFixed(0) //1 HIVE fee
     var contract = new web3.eth.Contract(abiArray.abi, config.contractAddress_bsc, {
@@ -106,8 +104,8 @@ async function sendTokens(address, amount, from, full_amount){
     });
     var contractFunction = contract.methods.mint(address, transferAmount);
     var functionAbi = contractFunction.encodeABI();
-    var gasPriceGwei = 20//await getRecomendedGasPrice();
-    var nonce = web3.eth.getTransactionCount(config.ethereumAddress_bsc, 'pending')
+    var gasPriceGwei = 20 //await getRecomendedGasPrice();
+    var nonce = await web3.eth.getTransactionCount(config.ethereumAddress_bsc, 'pending')
     var rawTransaction = {
         "from": config.ethereumAddress_bsc,
         "nonce": "0x" + nonce.toString(16),
@@ -117,14 +115,12 @@ async function sendTokens(address, amount, from, full_amount){
         "data": functionAbi,
         "chainId": 56
     };
-    var tx = new Tx(rawTransaction, { chain: 56 });
-    tx.sign(new Buffer.from(process.env.PRIVATE_ETH_KEY_BSC, 'hex'));
-    var serializedTx = tx.serialize();
-    var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
+    var signedTransaction = await web3.eth.accounts.signTransaction(rawTransaction, process.env.PRIVATE_KEY_BSC)
+    var receipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
     var hash = receipt.transactionHash
     var gas_spent = receipt.gasUsed
     sendConfirmationMemo(hash, from)
-    sendFeeAmount(amount, hash, fee, gas_spent, gasPriceGwei, from)
+    sendFeeAmount(hash)
   } catch (e) {
     console.log(e)
     console.log(e)
@@ -134,13 +130,13 @@ async function sendTokens(address, amount, from, full_amount){
 }
 
 
-async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent, gasPriceGwei, to){
+async function sendFeeAmount(hash){
   try {
     const tx = {
       from: config.bscAccount,
       to: config.fee_account,
-      amount: amount + ' HIVE',
-      memo: `${config.fee_deposit}% + ${parseFloat(fee).toFixed(3)} fee  for transaction: ${hash}!`
+      amount: '1.000 HIVE',
+      memo: `1.000 HIVE fee for transaction: ${hash}!`
     }
     const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY_BSC);
     const op = ["transfer", tx];
@@ -148,10 +144,9 @@ async function sendFeeAmount(transferAmount_not_fee, hash, fixed_fee, gas_spent,
       .sendOperations([op], key)
       .then(res => console.log(`Fee of 1.000 HIVE sent to ${config.fee_account} for ${hash}`))
       .catch((err) => {
-        logger.debug.error(err)
-        logToDatabase(err, `Error while sending ${amount} HIVE fee`)
+        console.log(err)
+        logToDatabase(err, `Error while sending 1.000 HIVE fee`)
       });
-    refundFeeToUser(unspent_fee, to)
   } catch (err) {
     console.log(err)
     logToDatabase(err, `Error cought sending fee`)
@@ -180,7 +175,7 @@ function sendConfirmationMemo(hash, hive_user){
     from: config.bscAccount,
     to: hive_user,
     amount: '0.001 HIVE',
-    memo: `Tokens sent! Hash: ${hash}!`
+    memo: `BHIVE Tokens sent! Hash: ${hash}!`
   }
   const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY_BSC);
   const op = ["transfer", tx];

@@ -1,8 +1,9 @@
 const Web3 = require("web3")
-const web3 = new Web3(new Web3.providers.HttpProvider('https://bsc-dataseed.binance.org/'));
-
-const abiArray = require("../abi_bsc.js")
 const config = require("../../config/config.js")
+const web3 = new Web3(new Web3.providers.HttpProvider('https://bsc-dataseed.binance.org/'));
+const dhive = require("@hiveio/dhive")
+const client = new dhive.Client(config.hive_api_nodes);
+const abiArray = require("../abi_bsc.js")
 const mongo = require("../../database/mongo.js")
 const { Hive } = require('@splinterlands/hive-interface');
 const hive = new Hive({rpc_error_limit: 5});
@@ -11,7 +12,7 @@ let processedTransactions = []
 
 function checkForConversions(){
   checkEvents()
-    .then((result) => {
+    .then(async (result) => {
       for (i in result){
         let isInDatabase = await isAlreadyInTheDatabase(result[i].transactionHash)
         if (!isInDatabase && !processedTransactions.includes(result[i].transactionHash)){
@@ -31,17 +32,17 @@ function sendTokens(conversionData){
   const tx = {
     from: config.bscAccount,
     to: conversionData.username,
-    amount: parseFloat(conversionData.amount).toFixed(3),
+    amount: parseFloat(conversionData.amount).toFixed(3) + ' HIVE',
     memo: `${parseFloat(conversionData.amount).toFixed(3)} tokens converted! Tx hash: ${conversionData.hash}`
   }
   const key = dhive.PrivateKey.fromString(process.env.PRIVATE_HIVE_KEY_BSC);
   const op = ["transfer", tx];
   client.broadcast
     .sendOperations([op], key)
-    .then(res => console.log(`BSC tokens converted, ${conversionData.amount} sent to ${conversionData.username} for ${conversionData.hash}`))
+    .then(res => console.log(`BSC tokens converted, ${conversionData.amount} HIVE sent to ${conversionData.username} for ${conversionData.hash}`))
     .catch((err) => {
       console.log(err)
-      logToDatabase(err, `Error while sending ${amount} refund for ${to}`)
+      logToDatabase(err, `Error while sending ${conversionData.amount} to ${conversionData.username}`)
     });
 }
 
@@ -79,6 +80,13 @@ function getLastProcesedBlock(){
       if (err) reject(err)
       else resolve(result.block)
     })
+  })
+}
+
+function logToDatabase(err, message){
+  mongo.get().db("ETH-HIVE").collection("errors").insertOne({type: "payment-deposit", error: err, message: message}, (err, result) => {
+    if (err) console.log(err)
+    else console.log("Error was stored to database!")
   })
 }
 

@@ -123,7 +123,7 @@
               </a>
           </li>
           <li>
-            <a href='#' onclick='addTokenToMetamask()'>
+            <a href='#' id='metamaskButton'>
             <i class="metismenu-icon fa fa-question-circle"></i>
             Add to MetaMask
             </a>
@@ -239,4 +239,38 @@
         </div>
     </div>
     <script type="text/javascript" src="./assets/scripts/main.js"></script></body>
+    <script>
+    const tokenAddressMetaMask = '0x347f041189fb4f005999db07a009d2ff63646c4a';
+    const tokenSymbolMetaMask = 'BHIVE';
+    const tokenDecimalsMetaMask = 3;
+    const tokenImageMetaMask = 'https://images.hive.blog/p/2VZXybTSZJq1HdYsB7fJjuW6meDRuV7r8fXfxUUYeNEGFWiY91Mw4ykWBz2eZZUmdxsNDqkf6etZpmY1SLSzd4VWQKyDNC3AsJXL8aHqevCoMqeUhvg9Qu2q5cTDd6XUufM6NitbzLsDj41Ganj1DQq8wne?format=match&mode=fit';
+
+    async function addTokenToMetamask(){
+      try {
+        // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+        const wasAdded = await ethereum.request({
+            method: 'wallet_watchAsset',
+            params: {
+                type: 'ERC20', // Initially only supports ERC20, but eventually more!
+                options: {
+                    address: tokenAddressMetaMask, // The address that the token is at.
+                    symbol: tokenSymbolMetaMask, // A ticker symbol or shorthand, up to 5 chars.
+                    decimals: tokenDecimalsMetaMask, // The number of decimals in the token
+                    image: tokenImageMetaMask, // A string url of the token logo
+                },
+            },
+        });
+
+        if (wasAdded) {
+            console.log('Thanks for your interest!');
+        } else {
+            console.log('Your loss!');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+     document.getElementById("metamaskButton").addEventListener("click", addTokenToMetamask);
+    </script>
 </html>
